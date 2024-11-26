@@ -1,10 +1,14 @@
 module SweetDisposition {
-	requires javafx.graphics;
-	requires java.sql;
+	requires transitive javafx.graphics;
+	requires transitive java.sql;
+	requires javafx.controls;
 	
 	exports controllers;
+	exports interfaces;
 	exports main;
 	exports models;
+	exports repositories;
+	exports services;
 	exports utils;
 	exports views;
 }
