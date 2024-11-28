@@ -39,7 +39,7 @@ public class UserRepository extends BaseRepository<User> {
 	}
 
 	@Override
-	public User get(String id) {
+	public User get(Integer id) {
 		return this.select().where(PRIMARY_KEY, id).first();
 	}
 

@@ -16,7 +16,7 @@ public abstract class BaseRepository<T extends BaseModel> {
 
 	abstract public ArrayList<T> getAll();
 
-	abstract public T get(String id);
+	abstract public T get(Integer id);
 
 	abstract public T save(T model);
 

@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -168,7 +169,13 @@ public class QueryBuilder<T extends BaseModel> {
 			preparedStatement.setDouble(paramIndex, (Double) value);
 		} else if (value instanceof Boolean) {
 			preparedStatement.setBoolean(paramIndex, (Boolean) value);
-		} else {
+		} else if (value instanceof java.util.Date)  {
+			Long time = ((java.util.Date) value).getTime();
+			Timestamp timestamp = new Timestamp(time);
+			
+			preparedStatement.setTimestamp(paramIndex, timestamp);
+		}
+		else {
 			preparedStatement.setObject(paramIndex, value);
 		}
 	}
@@ -247,8 +254,6 @@ public class QueryBuilder<T extends BaseModel> {
 
 		this.baseQuery.append(String.join(", ", fields.stream().map(key -> "?").collect(Collectors.toList())));
 		this.baseQuery.append(") ");
-
-		System.out.println("SQL: " + this.buildBaseQuery());
 
 		try {
 			PreparedStatement preparedStatement = this.createPreparedStatement();
