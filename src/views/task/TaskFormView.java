@@ -10,7 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import views.BaseView;
 
-public class TaskFormView extends BaseView {
+public class TaskFormView extends BaseView<TaskFormView> {
 
 	private ITaskController controller;
 
@@ -18,7 +18,8 @@ public class TaskFormView extends BaseView {
 		this.controller = controller;
 	}
 
-	public Scene getScene() {
+	public Scene render() {
+
 		TextField titleField = new TextField();
 		titleField.setPromptText("Task Title");
 
@@ -37,8 +38,8 @@ public class TaskFormView extends BaseView {
 
 			try {
 
-				this.controller.create(title, description);
-				
+				this.controller.store(title, description);
+
 			} catch (Exception error) {
 				String message = error.getMessage();
 				errorText.setText(message);

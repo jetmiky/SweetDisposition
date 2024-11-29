@@ -1,16 +1,12 @@
 package main;
 
-import controllers.LoginController;
 import controllers.TaskController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import services.ScreenService;
-import views.ErrorView;
-import views.LoginView;
-import views.task.TaskFormView;
 
 public class Main extends Application {
-	
+
 	public String APP_NAME = "Sweet Disposition";
 
 	public static void main(String[] args) {
@@ -22,16 +18,21 @@ public class Main extends Application {
 	}
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
-		ScreenService.initialize(primaryStage);
-		ScreenService.getInstance().register("error", new ErrorView());
-		ScreenService.getInstance().register("login", new LoginView(new LoginController()));
-		ScreenService.getInstance().register("tasks", new TaskFormView(new TaskController()));
-		
-		ScreenService.getInstance().redirect("tasks");
-		
-		primaryStage.setTitle(APP_NAME);
-		primaryStage.show();
+	public void start(Stage stage) throws Exception {
+		initializeRoutes(stage);
+
+		ScreenService.getInstance().redirect("tasks.create");
+
+		stage.setTitle(APP_NAME);
+		stage.show();
 	}
-	
+
+	public void initializeRoutes(Stage stage) {
+		ScreenService.initialize(stage);
+
+		ScreenService screen = ScreenService.getInstance();
+
+		screen.register("tasks.create", TaskController.getInstance(), "create");	
+	}
+
 }

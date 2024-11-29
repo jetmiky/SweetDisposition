@@ -11,7 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
-public class LoginView extends BaseView {
+public class LoginView extends BaseView<LoginView> {
 
 	private ILoginController controller;
 
@@ -19,7 +19,7 @@ public class LoginView extends BaseView {
 		this.controller = controller;
 	}
 
-	public Scene getScene() {
+	public Scene render() {
 		TextField emailField = new TextField();
 		emailField.setPromptText("user@example.com");
 

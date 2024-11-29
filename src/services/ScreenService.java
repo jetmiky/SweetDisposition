@@ -1,16 +1,19 @@
 package services;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
-
+import java.util.Map;
+import controllers.BaseController;
+import controllers.ErrorController;
+import exceptions.ViewException;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
-import views.BaseView;
-import views.ErrorView;
 
 public class ScreenService {
 
 	private static ScreenService instance;
 	private static Stage stage;
-	private HashMap<String, BaseView> routes = new HashMap<>();
+	private static Map<String, ScreenHandler> routes = new HashMap<>();
 
 	public static ScreenService getInstance() {
 		if (instance == null) {
@@ -24,17 +27,39 @@ public class ScreenService {
 		stage = primaryStage;
 	}
 
-	public void register(String route, BaseView view) {
-		routes.put(route, view);
+	public void register(String route, BaseController controller, String method) {
+		routes.put(route, new ScreenHandler(controller, method));
+	}
+	
+	private ScreenHandler get(String route) {
+		ScreenHandler handler = routes.getOrDefault(route, new ScreenHandler(new ErrorController(), "routeNotFound"));
+		return handler;
 	}
 
-	public BaseView get(String route) {
-		return routes.getOrDefault(route, new ErrorView("Page not found!"));
-	}
+	public void redirect(String route) throws ViewException {
+		ScreenHandler handler = get(route);
 
-	public void redirect(String route) {
-		BaseView view = get(route);
-		stage.setScene(view.getScene());
+		BaseController controller = handler.controller;
+		String methodName = handler.method;
+		
+		try {
+			Method method = controller.getClass().getMethod(methodName);
+			Scene scene = (Scene) method.invoke(controller); 
+			stage.setScene(scene);
+		} catch (Exception e) {
+			throw new ViewException("Failed to redirect view.");
+		}
+
+	}
+	
+	public class ScreenHandler {
+		public BaseController controller;
+		public String method;
+
+		public ScreenHandler(BaseController controller, String method) {
+			this.controller = controller;
+			this.method = method;
+		}
 	}
 
 }

@@ -1,7 +1,12 @@
 package interfaces;
 
+import exceptions.ViewException;
+import javafx.scene.Scene;
+
 public interface ITaskController {
 
-	public void create(String title, String description) throws Exception;
-	
+	public Scene create() throws ViewException;
+
+	public void store(String title, String description) throws ViewException;
+
 }
