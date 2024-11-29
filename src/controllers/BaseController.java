@@ -1,5 +1,6 @@
 package controllers;
 
+import repositories.RepositoryFacade;
 import services.AuthService;
 import services.ScreenService;
 import services.StateService;
@@ -16,6 +17,10 @@ abstract public class BaseController {
 	
 	public StateService state() {
 		return StateService.getInstance();
+	}
+	
+	public RepositoryFacade db() {
+		return RepositoryFacade.getInstance();
 	}
 
 }

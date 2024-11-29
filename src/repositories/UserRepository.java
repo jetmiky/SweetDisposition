@@ -43,10 +43,6 @@ public class UserRepository extends BaseRepository<User> {
 		return this.select().where(PRIMARY_KEY, id).first();
 	}
 
-	public User getByEmail(String email) {
-		return this.select().where("email", email).first();
-	}
-
 	@Override
 	public User save(User model) {
 		return this.DB.save(model);

@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import controllers.BaseController;
-import controllers.ErrorController;
 import exceptions.ViewException;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -32,7 +31,7 @@ public class ScreenService {
 	}
 	
 	private ScreenHandler get(String route) {
-		ScreenHandler handler = routes.getOrDefault(route, new ScreenHandler(new ErrorController(), "routeNotFound"));
+		ScreenHandler handler = routes.get(route);
 		return handler;
 	}
 

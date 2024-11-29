@@ -1,7 +1,7 @@
-package views;
+package views.auth;
 
 import exceptions.AuthException;
-import interfaces.ILoginController;
+import interfaces.IAuthController;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,12 +10,13 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import views.BaseView;
 
 public class LoginView extends BaseView<LoginView> {
 
-	private ILoginController controller;
+	private IAuthController controller;
 
-	public LoginView(ILoginController controller) {
+	public LoginView(IAuthController controller) {
 		this.controller = controller;
 	}
 
@@ -37,7 +38,7 @@ public class LoginView extends BaseView<LoginView> {
 			String password = passwordField.getText();
 
 			try {
-				this.controller.login(email, password);
+				this.controller.attemptLogin(email, password);
 			} catch (AuthException error) {
 				String message = error.getMessage();
 				errorText.setText(message);

@@ -1,5 +1,6 @@
 package main;
 
+import controllers.AuthController;
 import controllers.TaskController;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -21,7 +22,7 @@ public class Main extends Application {
 	public void start(Stage stage) throws Exception {
 		initializeRoutes(stage);
 
-		ScreenService.getInstance().redirect("tasks.create");
+		ScreenService.getInstance().redirect("auth.login");
 
 		stage.setTitle(APP_NAME);
 		stage.show();
@@ -32,6 +33,7 @@ public class Main extends Application {
 
 		ScreenService screen = ScreenService.getInstance();
 
+		screen.register("auth.login", AuthController.getInstance(), "login");
 		screen.register("tasks.create", TaskController.getInstance(), "create");	
 	}
 
