@@ -20,4 +20,8 @@ public class RepositoryFacade {
 		return TaskRepository.getInstance();
 	}
 	
+	public ProgressRepository progresses() {
+		return ProgressRepository.getInstance();
+	}
+	
 }

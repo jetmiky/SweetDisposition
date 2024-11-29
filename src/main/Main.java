@@ -39,7 +39,7 @@ public class Main extends Application {
 		ScreenService.initialize(stage);
 
 		ScreenService screen = ScreenService.getInstance();
-
+		
 		screen.register("auth.login", AuthController.getInstance(), "login");
 		screen.register("tasks.create", TaskController.getInstance(), "create");
 	}
