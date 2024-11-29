@@ -28,7 +28,7 @@ public class AuthController extends BaseController implements IAuthController {
 	public void attemptLogin(String email, String password) throws AuthException{
 		User user = db().users().select().where("email", email).first();
 
-		if (user.exists() && user.getPassword().equals(password)) {
+		if (user.exists() && user.isPasswordMatched(password)) {
 			try {
 				screen().redirect("tasks.create");
 			} catch (ViewException e) {

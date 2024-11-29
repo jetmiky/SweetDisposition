@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import utils.StringHelper;
+
 public class User extends BaseModel {
 
 	private Integer id;
@@ -55,12 +57,12 @@ public class User extends BaseModel {
 		this.role = role;
 	}
 	
-	public String getPassword() {
-		return this.password;
-	}
-
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = StringHelper.hash(password);
+	}
+	
+	public boolean isPasswordMatched(String password) {
+		return StringHelper.hash(password).equals(this.password);
 	}
 	
 	public Integer getSupervisorId() {
@@ -77,7 +79,7 @@ public class User extends BaseModel {
 		this.setName(result.getString("name"));
 		this.setEmail(result.getString("email"));
 		this.setRole(result.getString("role"));
-		this.setPassword(result.getString("password"));
+		this.password = result.getString("password");
 	}
 
 	@Override
@@ -88,7 +90,7 @@ public class User extends BaseModel {
 		fields.put("name", this.getName());
 		fields.put("email", this.getEmail());
 		fields.put("role", this.getRole());
-		fields.put("password", this.getPassword());
+		fields.put("password", this.password);
 
 		return fields;
 	}
