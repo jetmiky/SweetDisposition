@@ -29,10 +29,14 @@ public class ScreenService {
 	public void register(String route, BaseController controller, String method) {
 		routes.put(route, new ScreenHandler(controller, method));
 	}
-	
-	private ScreenHandler get(String route) {
-		ScreenHandler handler = routes.get(route);
-		return handler;
+
+	private ScreenHandler get(String route) throws ViewException {
+		ScreenHandler handler = routes.getOrDefault(route, null);
+
+		if (handler != null)
+			return handler;
+
+		throw new ViewException("Route not found");
 	}
 
 	public void redirect(String route) throws ViewException {
@@ -40,17 +44,17 @@ public class ScreenService {
 
 		BaseController controller = handler.controller;
 		String methodName = handler.method;
-		
+
 		try {
 			Method method = controller.getClass().getMethod(methodName);
-			Scene scene = (Scene) method.invoke(controller); 
+			Scene scene = (Scene) method.invoke(controller);
 			stage.setScene(scene);
 		} catch (Exception e) {
 			throw new ViewException("Failed to redirect view.");
 		}
 
 	}
-	
+
 	public class ScreenHandler {
 		public BaseController controller;
 		public String method;

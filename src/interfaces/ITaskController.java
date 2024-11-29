@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 
 public interface ITaskController {
 
-	public Scene create() throws ViewException;
+	public Scene create();
 
 	public void store(String title, String description) throws ViewException;
 

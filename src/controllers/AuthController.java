@@ -20,12 +20,12 @@ public class AuthController extends BaseController implements IAuthController {
 	}
 
 	@Override
-	public Scene login() throws ViewException {
+	public Scene login() {
 		return new LoginView(this).render();
 	}
 
 	@Override
-	public void attemptLogin(String email, String password) throws AuthException{
+	public void attemptLogin(String email, String password) throws AuthException {
 		User user = db().users().select().where("email", email).first();
 
 		if (user.exists() && user.isPasswordMatched(password)) {

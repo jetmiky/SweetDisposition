@@ -18,7 +18,7 @@ public class TaskController extends BaseController implements ITaskController {
 		return instance;
 	}
 
-	public Scene create() throws ViewException {
+	public Scene create() {
 		return new TaskFormView(this).with("ADS", "AD").render();
 	}
 
