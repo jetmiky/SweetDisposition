@@ -19,9 +19,10 @@ public class User extends BaseModel {
 	public User() {
 	}
 
-	public User(String name, String email, String password) {
+	public User(String name, String email, String role, String password) {
 		this.setName(name);
 		this.setEmail(email);
+		this.setRole(role);
 		this.setPassword(password);
 	}
 

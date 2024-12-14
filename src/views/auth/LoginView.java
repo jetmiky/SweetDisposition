@@ -1,6 +1,7 @@
 package views.auth;
 
 import exceptions.AuthException;
+import exceptions.FormException;
 import interfaces.IAuthController;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -12,7 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import views.BaseView;
 
-public class LoginView extends BaseView<LoginView> {
+public class LoginView extends BaseView {
 
 	private IAuthController controller;
 
@@ -39,7 +40,7 @@ public class LoginView extends BaseView<LoginView> {
 
 			try {
 				this.controller.attemptLogin(email, password);
-			} catch (AuthException error) {
+			} catch (AuthException | FormException error) {
 				String message = error.getMessage();
 				errorText.setText(message);
 			}

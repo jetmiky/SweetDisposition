@@ -4,7 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class ErrorView extends BaseView<ErrorView> {
+public class ErrorView extends BaseView {
 
 	private String message;
 	

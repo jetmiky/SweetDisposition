@@ -2,7 +2,7 @@ package main;
 
 import controllers.AuthController;
 import controllers.TaskController;
-import exceptions.ViewException;
+import controllers.UserController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import services.ScreenService;
@@ -21,27 +21,27 @@ public class Main extends Application {
 			System.err.println("Global exception handler: " + throwable.getMessage());
 		});
 
-		try {
-			initializeRoutes(stage);
+		initializeRoutes(stage);
 
-			ScreenService.getInstance().redirect("auth.login");
+		ScreenService.getInstance().redirect("auth.login");
 
-			stage.setTitle(APP_NAME);
-			stage.show();
-		} catch (ViewException error) {
-			System.err.println("View exception handler: " + error.getMessage());
-		} catch (Exception error) {
-			System.err.println("Other exception handler: " + error.getMessage());
-		}
+		stage.setTitle(APP_NAME);
+		stage.show();
 	}
 
 	public void initializeRoutes(Stage stage) {
 		ScreenService.initialize(stage);
 
 		ScreenService screen = ScreenService.getInstance();
-		
+
 		screen.register("auth.login", AuthController.getInstance(), "login");
+		screen.register("auth.logout", AuthController.getInstance(), "logout");
+		screen.register("users.index", UserController.getInstance(), "index");
+		screen.register("users.create", UserController.getInstance(), "create");
+		screen.register("tasks.index.manager", TaskController.getInstance(), "manager");
+		screen.register("tasks.index.staff", TaskController.getInstance(), "staff");
 		screen.register("tasks.create", TaskController.getInstance(), "create");
+		screen.register("tasks.view", TaskController.getInstance(), "view");
 	}
 
 }

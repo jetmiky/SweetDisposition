@@ -12,7 +12,7 @@ public class ScreenService {
 
 	private static ScreenService instance;
 	private static Stage stage;
-	private static Map<String, ScreenHandler> routes = new HashMap<>();
+	private Map<String, ScreenHandler> routes = new HashMap<>();
 
 	public static ScreenService getInstance() {
 		if (instance == null) {
@@ -39,20 +39,20 @@ public class ScreenService {
 		throw new ViewException("Route not found");
 	}
 
-	public void redirect(String route) throws ViewException {
-		ScreenHandler handler = get(route);
-
-		BaseController controller = handler.controller;
-		String methodName = handler.method;
-
+	public void redirect(String route) {	
 		try {
+			ScreenHandler handler = get(route);
+			
+			BaseController controller = handler.controller;
+			String methodName = handler.method;
+			
 			Method method = controller.getClass().getMethod(methodName);
 			Scene scene = (Scene) method.invoke(controller);
-			stage.setScene(scene);
-		} catch (Exception e) {
-			throw new ViewException("Failed to redirect view.");
-		}
 
+			stage.setScene(scene);
+		} catch (Exception error) {
+			throw new RuntimeException(error.getMessage());
+		}
 	}
 
 	public class ScreenHandler {
