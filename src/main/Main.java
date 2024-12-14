@@ -1,9 +1,12 @@
 package main;
 
+import java.net.URISyntaxException;
+
 import controllers.AuthController;
 import controllers.TaskController;
 import controllers.UserController;
 import javafx.application.Application;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import services.ScreenService;
 
@@ -16,7 +19,7 @@ public class Main extends Application {
 	}
 
 	@Override
-	public void start(Stage stage) {
+	public void start(Stage stage) throws URISyntaxException {
 		Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
 			System.err.println("Global exception handler: " + throwable.getMessage());
 		});
@@ -24,7 +27,8 @@ public class Main extends Application {
 		initializeRoutes(stage);
 
 		ScreenService.getInstance().redirect("auth.login");
-
+		stage.getIcons().add(new Image((getClass().getResource("/resources/icons.png").toURI().toString())));
+		
 		stage.setTitle(APP_NAME);
 		stage.show();
 	}

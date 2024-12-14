@@ -1,6 +1,8 @@
 package repositories;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import models.User;
 import utils.QueryBuilder;
 
@@ -59,4 +61,8 @@ public class UserRepository extends BaseRepository<User> {
 		return this.delete(id);
 	}
 
+	// Metode baru untuk mendapatkan daftar pengguna dengan role 'staff'
+	public List<User> getStaffList() {
+		return this.select().where("role", "staff").get();
+	}
 }

@@ -11,4 +11,7 @@ public interface IUserController {
 
 	public void store(String name, String email, String role, String password) throws FormException;
 
+	public void deleteUser(Integer id);
+
+	public boolean updateUserRole(Integer id, String newRole);
 }

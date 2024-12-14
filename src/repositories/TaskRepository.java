@@ -60,4 +60,9 @@ public class TaskRepository extends BaseRepository<Task> {
 		return this.delete(id);
 	}
 
+	// New Method: Delete task by ID
+	public boolean deleteTaskById(Integer taskId) {
+		return this.delete(taskId);
+	}
+
 }

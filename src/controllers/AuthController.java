@@ -48,7 +48,7 @@ public class AuthController extends BaseController implements IAuthController {
 			default:
 				break;
 			}
-
+			
 			screen().redirect(path);
 
 		} else {

@@ -6,9 +6,20 @@ import java.util.Map;
 import controllers.BaseController;
 import exceptions.ViewException;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.TilePane;
 import javafx.stage.Stage;
 
 public class ScreenService {
+	public static BorderPane bp = new BorderPane();
+	public static Scene scene = null;
+	public static GridPane gp = new GridPane();
+	public static TilePane tp = new TilePane();
+	public static FlowPane fp = new FlowPane();
+	public static ScrollPane sp = new ScrollPane();
 
 	private static ScreenService instance;
 	private static Stage stage;
@@ -24,6 +35,8 @@ public class ScreenService {
 
 	public static void initialize(Stage primaryStage) {
 		stage = primaryStage;
+		bp = new BorderPane();
+		scene = new Scene(bp, 1000,600); 
 	}
 
 	public void register(String route, BaseController controller, String method) {

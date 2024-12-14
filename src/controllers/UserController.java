@@ -42,4 +42,28 @@ public class UserController extends BaseController implements IUserController {
 
 		screen().redirect("users.index");
 	}
+	
+	@Override
+	public void deleteUser(Integer id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean updateUserRole(Integer id, String newRole) {
+	    if (id == null || newRole == null || newRole.isEmpty()) {
+	        return false;
+	    }
+	    User user = db().users().get(id);
+	    if (user != null) {
+	        user.setRole(newRole);
+	        db().users().save(user);
+	        return true;
+	    }
+	    return false;
+	}
+
+	public boolean deleteUserConfirmation(Integer id) {
+		return false;
+	}
 }

@@ -4,12 +4,21 @@ import exceptions.AuthException;
 import exceptions.FormException;
 import interfaces.IAuthController;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import views.BaseView;
 
@@ -22,44 +31,117 @@ public class LoginView extends BaseView {
 	}
 
 	public Scene render() {
-		TextField emailField = new TextField();
-		emailField.setPromptText("user@example.com");
+		// Menu bar
+		HBox menuBar = new HBox(10);
+		menuBar.setPadding(new Insets(10));
+		menuBar.setStyle("-fx-background-color: #1565C0;");
 
-		PasswordField passwordField = new PasswordField();
-		passwordField.setPromptText("********");
+		Button loginMenuButton = new Button("Sweet Disposition");
+//        Button registerMenuButton = new Button("Register");
+		styleMenuButton(loginMenuButton);
+//        styleMenuButton(registerMenuButton);
+
+		menuBar.getChildren().addAll(loginMenuButton);
+		// Botton
+		HBox bottomBar = new HBox(6);
+		bottomBar.setPadding(new Insets(10));
+		bottomBar.setStyle("-fx-background-color: #1565C0;");
+
+		Text bottomText = new Text("Created with love and passion");
+		bottomText.setFill(Color.WHITE);
+		bottomBar.getChildren().addAll(bottomText);
+		bottomBar.setAlignment(Pos.CENTER);
+
+		// Login form
+		VBox loginFormContainer = new VBox(20);
+		loginFormContainer.setPadding(new Insets(40));
+		loginFormContainer.setAlignment(Pos.CENTER);
+
+		Text formTitle = new Text("Login");
+		formTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+		formTitle.setFill(Color.BLACK);
+
+		GridPane loginForm = new GridPane();
+		loginForm.setHgap(10);
+		loginForm.setVgap(15);
+		loginForm.setAlignment(Pos.CENTER);
 
 		Label emailLabel = new Label("Email");
+		TextField usernameField = new TextField();
+		usernameField.setPromptText("Email...");
+
 		Label passwordLabel = new Label("Password");
+		PasswordField passwordField = new PasswordField();
+		passwordField.setPromptText("Password...");
 
-		Text errorText = new Text("");
+		loginForm.add(emailLabel, 0, 0);
+		loginForm.add(usernameField, 1, 0);
+		loginForm.add(passwordLabel, 0, 1);
+		loginForm.add(passwordField, 1, 1);
 
-		Button button = new Button("LOGINNNNN");
-		button.setOnAction(e -> {
-			String email = emailField.getText();
+		Button signInButton = new Button("Sign in");
+		signInButton.setStyle(
+				"-fx-background-color: #1E88E5; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;");
+		signInButton.setOnAction(e -> {
+			String username = usernameField.getText();
 			String password = passwordField.getText();
 
 			try {
-				this.controller.attemptLogin(email, password);
+				this.controller.attemptLogin(username, password);
 			} catch (AuthException | FormException error) {
-				String message = error.getMessage();
-				errorText.setText(message);
+				System.err.println(error.getMessage());
 			}
 		});
 
-		GridPane container = new GridPane();
-		container.setPadding(new Insets(16));
-		container.setHgap(12);
-		container.setVgap(12);
+		Label forgotPassword = new Label("Forgot your password?");
+		forgotPassword.setTextFill(Color.GRAY);
 
-		container.add(emailLabel, 0, 0);
-		container.add(emailField, 1, 0);
-		container.add(passwordLabel, 0, 1);
-		container.add(passwordField, 1, 1);
-		container.add(button, 0, 2);
-		container.add(errorText, 0, 3);
-		GridPane.setColumnSpan(errorText, 2);
+		VBox formActions = new VBox(10, signInButton, forgotPassword);
+		formActions.setAlignment(Pos.CENTER);
 
-		return new Scene(container);
+		loginFormContainer.getChildren().addAll(formTitle, loginForm, formActions);
+
+		// Image placeholder
+		VBox imagePlaceholder = new VBox();
+		imagePlaceholder.setAlignment(Pos.CENTER);
+		imagePlaceholder.setStyle("-fx-background-color: #dae4fe;");
+
+		// Load and add the image
+		try {
+			Image imageView = new Image(getClass().getResource("/resources/loginIlust.png").toURI().toString());
+			ImageView iv = new ImageView(imageView);
+
+			iv.setFitWidth(500); // Adjusted to stretch full
+			iv.setPreserveRatio(true); // Keep the aspect ratio
+			iv.setSmooth(true);
+			imagePlaceholder.getChildren().add(iv);
+		} catch (Exception e) {
+			Text errorText = new Text("Image not found");
+			errorText.setFill(Color.GRAY);
+			errorText.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+			imagePlaceholder.getChildren().add(errorText);
+		}
+
+		// Main layout
+		BorderPane layout = new BorderPane();
+		layout.setTop(menuBar);
+		layout.setLeft(loginFormContainer);
+		layout.setCenter(imagePlaceholder);
+		layout.setBottom(bottomBar);
+
+		BorderPane.setAlignment(loginFormContainer, Pos.CENTER_LEFT);
+		BorderPane.setAlignment(imagePlaceholder, Pos.CENTER_RIGHT);
+
+		layout.setLeft(loginFormContainer);
+		layout.setCenter(imagePlaceholder);
+
+		Scene scene = new Scene(layout, 1000, 600); // Stretched to full width and height
+
+		return scene;
 	}
 
+	private void styleMenuButton(Button button) {
+		button.setStyle("-fx-background-color: #1E88E5;" + "-fx-text-fill: white;" + "-fx-font-size: 14px;"
+				+ "-fx-font-weight: bold;" + "-fx-background-radius: 5px;");
+	}
 }

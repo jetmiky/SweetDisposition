@@ -47,14 +47,40 @@ public class TaskController extends BaseController implements ITaskController {
 		TaskFormView view = new TaskFormView(this);
 		return view.render();
 	}
+	
+	// Store a new task and assign it to a staff member
+    @Override
+    public void store(String title, String description, Integer staffId) throws FormException {
+        if (staffId == null) {
+            throw new FormException("Staff ID is required to assign the task.");
+        }
 
-	@Override
-	public void store(String title, String description) throws FormException {
-		Task task = new Task(1, 1, title, description);
+        // Ambil user yang sedang login sebagai manager
+        User user = auth().user();
+        Integer managerId = user.getId();
 
-		db().tasks().save(task);
+        // Status default untuk task baru
+        String defaultStatus = "ongoing";
 
-		screen().redirect("tasks.index");
-	}
+        // Membuat objek Task
+        Task task = new Task(managerId, staffId, title, description);
+
+        // Simpan task ke database
+        db().tasks().save(task);
+
+        // Redirect ke halaman daftar task
+        screen().redirect("tasks.index.manager");
+    }
+
+    // Delete task by ID
+    public boolean deleteTask(int taskId) {
+        boolean success = db().tasks().delete(taskId);
+
+        if (success) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }
