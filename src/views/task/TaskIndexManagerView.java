@@ -28,8 +28,6 @@ public class TaskIndexManagerView extends BaseView {
 	}
 
 	public Pane render() {
-		VBox container = new VBox(10);
-
 		HBox bar = new HBox(10);
 		Text title = new Text("Manage Tasks");
 		title.setFont(new Font(24));
@@ -50,20 +48,41 @@ public class TaskIndexManagerView extends BaseView {
 
 		table.getColumns().addAll(taskIdColumn, taskTitleColumn, taskDescriptionColumn);
 
+		HBox buttons = new HBox();
+		buttons.setSpacing(8);
+
+		Button viewTaskButton = new Button("View Task Detail");
+		viewTaskButton.setOnAction(e -> {
+			try {
+				Task task = table.getSelectionModel().getSelectedItem();
+				if (task == null)
+					throw new FormException("Please select a task to view");
+
+				state().set("task", task);
+				screen().redirect("tasks.show.manager");
+			} catch (FormException error) {
+				AlertComponent.error("Failed", error.getMessage());
+			}
+		});
+
 		Button deleteTaskButton = new Button("Delete Selected Task");
 		deleteTaskButton.setOnAction(e -> {
 			try {
 				Task task = table.getSelectionModel().getSelectedItem();
-				
+
 				controller.delete(task);
 				table.getItems().remove(task);
+
 				AlertComponent.success("Success", "Task successfully deleted");
 			} catch (FormException error) {
 				AlertComponent.error("Failed", error.getMessage());
 			}
 		});
 
-		container.getChildren().addAll(bar, table, deleteTaskButton);
+		buttons.getChildren().addAll(viewTaskButton, deleteTaskButton);
+
+		VBox container = new VBox(10);
+		container.getChildren().addAll(bar, table, buttons);
 
 		return container;
 	}

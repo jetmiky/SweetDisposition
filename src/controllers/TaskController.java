@@ -9,6 +9,8 @@ import models.User;
 import views.task.TaskFormView;
 import views.task.TaskIndexManagerView;
 import views.task.TaskIndexStaffView;
+import views.task.TaskShowManagerView;
+import views.task.TaskShowStaffView;
 
 public class TaskController extends BaseController implements ITaskController {
 
@@ -23,7 +25,7 @@ public class TaskController extends BaseController implements ITaskController {
 	}
 
 	@Override
-	public Pane manager() {
+	public Pane managerIndex() {
 		User user = auth().user();
 		List<Task> tasks = db().tasks().select().where("manager_id", user.getId()).get();
 
@@ -31,7 +33,7 @@ public class TaskController extends BaseController implements ITaskController {
 	}
 
 	@Override
-	public Pane staff() {
+	public Pane staffIndex() {
 		User user = auth().user();
 		List<Task> tasks = db().tasks().select().where("staff_id", user.getId()).get();
 
@@ -52,13 +54,33 @@ public class TaskController extends BaseController implements ITaskController {
 			throw new FormException("Title cannot be empty");
 		if (description.isBlank())
 			throw new FormException("Description cannot be empty");
-
+		if (staff == null || !staff.exists())
+			throw new FormException("Please select a staff");
+		
 		User manager = auth().user();
 		Task task = new Task(manager.getId(), staff.getId(), title, description);
 
 		db().tasks().save(task);
 
 		screen().redirect("tasks.index.manager");
+	}
+	
+	@Override
+	public Pane managerShow() {
+		Task task = (Task) state().get("task");
+		User manager = db().users().get(task.getManagerId());
+		User staff = db().users().get(task.getStaffId());
+		
+		return new TaskShowManagerView(this, task, manager, staff).render();
+	}
+	
+	@Override
+	public Pane staffShow() {
+		Task task = (Task) state().get("task");
+		User manager = db().users().get(task.getManagerId());
+		User staff = db().users().get(task.getStaffId());
+		
+		return new TaskShowStaffView(this, task, manager, staff).render();
 	}
 
 	@Override

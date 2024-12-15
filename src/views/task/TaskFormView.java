@@ -42,18 +42,23 @@ public class TaskFormView extends BaseView {
 		Label descriptionLabel = new Label("Description");
 		Label staffLabel = new Label("Assign Task to");
 
-		Button button = new Button("Add Task");
-		button.setOnAction(e -> {
+		Button addButton = new Button("Add Task");
+		addButton.setOnAction(e -> {
 			String title = titleField.getText();
 			String description = descriptionField.getText();
-			User staff = staffDropdown.getValue();
-
+			User staff = staffDropdown.getSelectionModel().getSelectedItem();
+			
 			try {
 				this.controller.store(title, description, staff);
 				AlertComponent.success("Success", "Task successfully created");
 			} catch (FormException error) {
 				AlertComponent.error("Error", error.getMessage());
 			}
+		});
+		
+		Button cancelButton = new Button("Cancel");
+		cancelButton.setOnAction(e -> {
+			screen().redirect("tasks.index.manager");
 		});
 
 		GridPane container = new GridPane();
@@ -67,7 +72,8 @@ public class TaskFormView extends BaseView {
 		container.add(descriptionField, 1, 1);
 		container.add(staffLabel, 0, 2);
 		container.add(staffDropdown, 1, 2);
-		container.add(button, 0, 3);
+		container.add(addButton, 0, 3);
+		container.add(cancelButton, 0, 4);
 
 		return container;
 	}

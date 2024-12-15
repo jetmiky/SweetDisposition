@@ -7,13 +7,17 @@ import models.User;
 
 public interface ITaskController {
 
-	public Pane manager();
+	public Pane managerIndex();
 
-	public Pane staff();
+	public Pane staffIndex();
 
 	public Pane create();
 
 	public void store(String title, String description, User staff) throws FormException;
+	
+	public Pane managerShow();
+
+	public Pane staffShow();
 
 	public void delete(Task task) throws FormException;
 }
