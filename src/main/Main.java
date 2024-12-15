@@ -3,6 +3,7 @@ package main;
 import java.net.URISyntaxException;
 
 import controllers.AuthController;
+import controllers.ProgressController;
 import controllers.TaskController;
 import controllers.UserController;
 import javafx.application.Application;
@@ -46,7 +47,7 @@ public class Main extends Application {
 		screen.register("tasks.show.manager", TaskController.getInstance(), "managerShow");
 		screen.register("tasks.show.staff", TaskController.getInstance(), "staffShow");
 		screen.register("tasks.create", TaskController.getInstance(), "create");
-		screen.register("tasks.view", TaskController.getInstance(), "view");
+		screen.register("progresses.create", ProgressController.getInstance(), "create");
 	}
 	
 	public void setStageIcon(Stage stage, String path) {

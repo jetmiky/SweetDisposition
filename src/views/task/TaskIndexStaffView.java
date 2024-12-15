@@ -64,6 +64,8 @@ public class TaskIndexStaffView extends BaseView {
 				screen().redirect("tasks.show.staff");
 			} catch (FormException error) {
 				AlertComponent.error("Failed", error.getMessage());
+			} catch (Exception error) {
+				error.printStackTrace();
 			}
 		});
 		

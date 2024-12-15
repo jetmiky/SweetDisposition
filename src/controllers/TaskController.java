@@ -79,10 +79,11 @@ public class TaskController extends BaseController implements ITaskController {
 	@Override
 	public Pane staffShow() {
 		Task task = (Task) state().get("task");
+		List<Progress> progresses = db().progresses().getProgresses(task);
 		User manager = db().users().get(task.getManagerId());
 		User staff = db().users().get(task.getStaffId());
 		
-		return new TaskShowStaffView(this, task, manager, staff).render();
+		return new TaskShowStaffView(this, task, progresses, manager, staff).render();
 	}
 
 	@Override

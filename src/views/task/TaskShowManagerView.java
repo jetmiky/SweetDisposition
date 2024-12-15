@@ -46,7 +46,7 @@ public class TaskShowManagerView extends BaseView {
 		Text taskDescription = new Text(this.task.getDescription());
 		Text staffName = new Text(this.staff.getName());
 		
-		TableView<Progress> table = new TableView<>(progresses);
+		TableView<Progress> table = new TableView<>(this.progresses);
 		
 		TableColumn<Progress, String> idColumn = new TableColumn<>("ID");
 		TableColumn<Progress, String> descriptionColumn = new TableColumn<>("Description");
