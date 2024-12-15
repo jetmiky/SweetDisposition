@@ -83,9 +83,6 @@ public class TaskController extends BaseController implements ITaskController {
 		User manager = db().users().get(task.getManagerId());
 		User staff = db().users().get(task.getStaffId());
 		
-//		System.out.println(task.getId());
-//		System.out.println(db().progresses().select().where("task_id", task.getId()).toSQL());
-	
 		return new TaskShowStaffView(this, task, progresses, manager, staff).render();
 	}
 

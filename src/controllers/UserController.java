@@ -45,10 +45,13 @@ public class UserController extends BaseController implements IUserController {
 		if (password.length() < 8)
 			throw new FormException("Password should be minimum 8 characters long");
 
-		User user = new User(name, email, role, password);
-		
+		User user = db().users().select().where("email", email).first();
+		if (user.exists())
+			throw new FormException("Email already taken.");
+
+		user = new User(name, email, role, password);
 		db().users().save(user);
-		
+
 		screen().redirect("users.index");
 	}
 

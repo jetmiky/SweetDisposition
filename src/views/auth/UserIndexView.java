@@ -146,7 +146,7 @@ public class UserIndexView extends BaseView {
 								users.remove(user);
 								
 								AlertComponent.success("Berhasil", "Pengguna berhasil dihapus!");
-							} catch (FormException error) {
+							} catch (Exception error) {
 								AlertComponent.error("Gagal", error.getMessage());
 							}
 						}
