@@ -26,13 +26,14 @@ public class AuthController extends BaseController implements IAuthController {
 
 	@Override
 	public void attemptLogin(String email, String password) throws AuthException, FormException {
-		if (email.isBlank()) throw new FormException("Email cannot be empty");
-		if (password.isBlank()) throw new FormException("Password cannot be empty");
-		
+		if (email.isBlank())
+			throw new FormException("Email cannot be empty");
+		if (password.isBlank())
+			throw new FormException("Password cannot be empty");
+
 		User user = db().users().select().where("email", email).first();
 
 		if (user.exists() && user.isPasswordMatched(password)) {
-
 			auth().setUser(user);
 
 			String role = user.getRole();
@@ -53,7 +54,6 @@ public class AuthController extends BaseController implements IAuthController {
 			}
 
 			screen().redirect(path);
-
 		} else {
 			throw new AuthException("No valid account with these credentials.");
 		}

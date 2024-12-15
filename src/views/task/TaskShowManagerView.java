@@ -1,17 +1,20 @@
 package views.task;
 
+import interfaces.ITaskController;
 import java.util.Date;
 import java.util.List;
-
-import interfaces.ITaskController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import models.Progress;
 import models.Task;
@@ -46,6 +49,9 @@ public class TaskShowManagerView extends BaseView {
 		Text taskDescription = new Text(this.task.getDescription());
 		Text staffName = new Text(this.staff.getName());
 		
+		Text progressesTitle = new Text("Progresses");
+		progressesTitle.setFont(new Font("Arial Black", 20));
+		
 		TableView<Progress> table = new TableView<>(this.progresses);
 		
 		TableColumn<Progress, String> idColumn = new TableColumn<>("ID");
@@ -65,17 +71,27 @@ public class TaskShowManagerView extends BaseView {
 			screen().redirect("tasks.index.manager");
 		});
 		
-		GridPane container = new GridPane();
-		container.add(manager, 0, 0);
-		container.add(managerName, 1, 0);
-		container.add(title, 0, 1);
-		container.add(taskTitle, 1, 1);
-		container.add(description, 0, 2);
-		container.add(taskDescription, 1, 2);
-		container.add(staff, 0, 3);
-		container.add(staffName, 1, 3);
-		container.add(cancelButton, 0, 4);
-		container.add(table, 0, 5);
+		HBox buttons = new HBox();
+		buttons.setSpacing(8);
+		buttons.getChildren().add(cancelButton);
+		
+		GridPane details = new GridPane();
+		details.setVgap(16);
+		details.setHgap(8);
+		details.add(manager, 0, 0);
+		details.add(managerName, 1, 0);
+		details.add(title, 0, 1);
+		details.add(taskTitle, 1, 1);
+		details.add(description, 0, 2);
+		details.add(taskDescription, 1, 2);
+		details.add(staff, 0, 3);
+		details.add(staffName, 1, 3);
+		details.add(progressesTitle, 0, 4);
+		
+		VBox container = new VBox();
+		container.setPadding(new Insets(16));
+		container.setSpacing(16);
+		container.getChildren().addAll(details, table, buttons);
 	
 		return container;
 	}

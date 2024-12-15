@@ -42,5 +42,20 @@ public class ProgressController extends BaseController implements IProgressContr
 		state().set("task", task);
 		screen().redirect("tasks.show.staff");
 	}
+	
+	@Override
+	public void delete(Progress progress) throws FormException {
+		if (progress == null)
+			throw new FormException("Please select a progress to delete");
+
+		Task task = db().tasks().get(progress.getTaskId());
+		
+		if (task.isCompleted() && progress.isCompleted()) {
+			task.setCompleted(false);
+			db().tasks().save(task);
+		}
+		
+		db().progresses().delete(progress);
+	}
 
 }

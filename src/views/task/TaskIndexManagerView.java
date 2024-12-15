@@ -6,10 +6,12 @@ import interfaces.ITaskController;
 import java.util.Date;
 import java.util.List;
 import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -30,15 +32,16 @@ public class TaskIndexManagerView extends BaseView {
 	}
 
 	public Pane render() {
-		HBox bar = new HBox(10);
+		BorderPane bar = new BorderPane();
 		Text title = new Text("Manage Tasks");
 		title.setFont(new Font(24));
 
 		Button createTaskButton = new Button("Create Task");
 		createTaskButton.setOnAction(e -> screen().redirect("tasks.create"));
 
-		bar.getChildren().addAll(title, createTaskButton);
-
+		bar.setLeft(title);
+		bar.setRight(createTaskButton);
+		
 		TableView<Task> table = new TableView<>(FXCollections.observableArrayList(tasks));
 		TableColumn<Task, Integer> taskIdColumn = new TableColumn<>("ID");
 		TableColumn<Task, String> taskTitleColumn = new TableColumn<>("Title");
@@ -88,6 +91,8 @@ public class TaskIndexManagerView extends BaseView {
 		buttons.getChildren().addAll(viewTaskButton, deleteTaskButton);
 
 		VBox container = new VBox(10);
+		container.setPadding(new Insets(16));
+		container.setSpacing(16);
 		container.getChildren().addAll(bar, table, buttons);
 
 		return container;

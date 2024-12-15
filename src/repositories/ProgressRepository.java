@@ -13,7 +13,7 @@ public class ProgressRepository extends BaseRepository<Progress> {
 
 	private static final String TABLE_NAME = "progresses";
 	private static final String PRIMARY_KEY = "id";
-	private static final String[] TABLE_PROPERTIES = { "id", "Progress_id", "description", "is_completed", "created_at" };
+	private static final String[] TABLE_PROPERTIES = { "id", "task_id", "description", "is_completed", "created_at" };
 
 	public static ProgressRepository getInstance() {
 		if (instance == null) {

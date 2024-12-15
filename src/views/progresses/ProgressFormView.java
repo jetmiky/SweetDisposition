@@ -2,6 +2,7 @@ package views.progresses;
 
 import exceptions.FormException;
 import interfaces.IProgressController;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -50,7 +51,8 @@ public class ProgressFormView extends BaseView {
 		
 		Button cancelButton = new Button("Cancel");
 		cancelButton.setOnAction(e -> {
-			screen().redirect("tasks.index.staff");
+			state().set("task", this.task);
+			screen().redirect("tasks.show.staff");
 		});
 		
 		HBox buttons = new HBox();
@@ -58,7 +60,8 @@ public class ProgressFormView extends BaseView {
 		buttons.getChildren().addAll(saveButton, cancelButton);
 		
 		VBox container = new VBox();
-		container.setSpacing(8);
+		container.setPadding(new Insets(16));
+		container.setSpacing(16);
 		container.getChildren().addAll(title, descriptionLabel, descriptionField, completedCheckbox, buttons);
 		
 		return container;

@@ -7,6 +7,7 @@ import exceptions.FormException;
 import interfaces.ITaskController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -74,6 +75,8 @@ public class TaskIndexStaffView extends BaseView {
 		buttons.getChildren().addAll(viewTaskButton);
 		
 		VBox container = new VBox();
+		container.setPadding(new Insets(16));
+		container.setSpacing(16);
 		container.getChildren().addAll(bar, table, buttons);	
 
 		return container;

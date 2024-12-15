@@ -37,7 +37,7 @@ public class TaskController extends BaseController implements ITaskController {
 	public Pane staffIndex() {
 		User user = auth().user();
 		List<Task> tasks = db().tasks().select().where("staff_id", user.getId()).get();
-
+		
 		return new TaskIndexStaffView(this, tasks).render();
 	}
 
@@ -79,10 +79,13 @@ public class TaskController extends BaseController implements ITaskController {
 	@Override
 	public Pane staffShow() {
 		Task task = (Task) state().get("task");
-		List<Progress> progresses = db().progresses().getProgresses(task);
+		List<Progress> progresses = db().progresses().select().where("task_id", task.getId()).get();
 		User manager = db().users().get(task.getManagerId());
 		User staff = db().users().get(task.getStaffId());
 		
+//		System.out.println(task.getId());
+//		System.out.println(db().progresses().select().where("task_id", task.getId()).toSQL());
+	
 		return new TaskShowStaffView(this, task, progresses, manager, staff).render();
 	}
 

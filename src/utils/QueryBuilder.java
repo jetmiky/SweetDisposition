@@ -59,14 +59,10 @@ public class QueryBuilder<T extends BaseModel> {
 		this.limit = null;
 		this.offset = null;
 	}
-
-	public QueryBuilder<T> select() {
-		return this.select("*");
-	}
 	
-	public QueryBuilder<T> select(String columns) {
+	public QueryBuilder<T> select() {
 		this.reset();
-		this.baseQuery.append("SELECT " + columns + " FROM ").append(this.table);
+		this.baseQuery.append("SELECT * FROM ").append(this.table);
 
 		return this;		
 	}
