@@ -1,8 +1,10 @@
 package repositories;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import models.Progress;
+import models.Task;
 import utils.QueryBuilder;
 
 public class ProgressRepository extends BaseRepository<Progress> {
@@ -59,5 +61,8 @@ public class ProgressRepository extends BaseRepository<Progress> {
 		Integer id = model.getId();
 		return this.delete(id);
 	}
-
+	
+	public List<Progress> getProgresses(Task task) {
+		return this.select().where("task_id", task.getId()).get();
+	}
 }

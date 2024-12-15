@@ -59,5 +59,5 @@ public class TaskRepository extends BaseRepository<Task> {
 		Integer id = model.getId();
 		return this.delete(id);
 	}
-
+	
 }

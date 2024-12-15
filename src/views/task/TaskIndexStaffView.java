@@ -1,5 +1,6 @@
 package views.task;
 
+import java.util.Date;
 import java.util.List;
 
 import exceptions.FormException;
@@ -41,12 +42,16 @@ public class TaskIndexStaffView extends BaseView {
 		TableColumn<Task, String> taskIdColumn = new TableColumn<>("ID");
 		TableColumn<Task, String> taskTitleColumn = new TableColumn<>("Title");
 		TableColumn<Task, String> taskDescriptionColumn = new TableColumn<>("Description");
-		
+		TableColumn<Task, Boolean> taskCompletedColumn = new TableColumn<>("Task Completed");
+		TableColumn<Task, Date> taskCreatedAtColumn = new TableColumn<>("Created At");		
+
 		taskIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 		taskTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 		taskDescriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+		taskCompletedColumn.setCellValueFactory(new PropertyValueFactory<>("isCompleted"));
+		taskCreatedAtColumn.setCellValueFactory(new PropertyValueFactory<>("createdAt"));
 		
-		table.getColumns().addAll(taskIdColumn, taskTitleColumn, taskDescriptionColumn);
+		table.getColumns().addAll(taskIdColumn, taskTitleColumn, taskDescriptionColumn, taskCompletedColumn, taskCreatedAtColumn);
 		
 		Button viewTaskButton = new Button("View Selected Task");
 		viewTaskButton.setOnAction(e -> {

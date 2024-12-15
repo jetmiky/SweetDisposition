@@ -4,6 +4,7 @@ import exceptions.FormException;
 import interfaces.ITaskController;
 import java.util.List;
 import javafx.scene.layout.Pane;
+import models.Progress;
 import models.Task;
 import models.User;
 import views.task.TaskFormView;
@@ -68,10 +69,11 @@ public class TaskController extends BaseController implements ITaskController {
 	@Override
 	public Pane managerShow() {
 		Task task = (Task) state().get("task");
+		List<Progress> progresses = db().progresses().getProgresses(task);
 		User manager = db().users().get(task.getManagerId());
 		User staff = db().users().get(task.getStaffId());
 		
-		return new TaskShowManagerView(this, task, manager, staff).render();
+		return new TaskShowManagerView(this, task, progresses, manager, staff).render();
 	}
 	
 	@Override

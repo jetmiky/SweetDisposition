@@ -13,6 +13,7 @@ public class Task extends BaseModel {
 	private Integer staffId;
 	private String title;
 	private String description;
+	private Boolean isCompleted;
 	private Date createdAt;
 
 	public Task() {
@@ -23,14 +24,16 @@ public class Task extends BaseModel {
 		this.setStaffId(staffId);
 		this.setTitle(title);
 		this.setDescription(description);
+		this.setCompleted(false);
 		this.setCreatedAt(new Date());
 	}
 	
-	public Task(Integer managerId, Integer staffId, String title, String description, Date createdAt) {
+	public Task(Integer managerId, Integer staffId, String title, String description, Boolean isCompleted, Date createdAt) {
 		this.setManagerId(managerId);
 		this.setStaffId(staffId);
 		this.setTitle(title);
 		this.setDescription(description);
+		this.setCompleted(isCompleted);
 		this.setCreatedAt(createdAt);
 	}
 
@@ -73,6 +76,18 @@ public class Task extends BaseModel {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public Boolean getIsCompleted() {
+		return this.isCompleted();
+	}
+
+	public Boolean isCompleted() {
+		return isCompleted;
+	}
+
+	public void setCompleted(Boolean isCompleted) {
+		this.isCompleted = isCompleted;
+	}
 
 	public Date getCreatedAt() {
 		return createdAt;
@@ -89,6 +104,7 @@ public class Task extends BaseModel {
 		this.setStaffId(result.getInt("staff_id"));
 		this.setTitle(result.getString("title"));
 		this.setDescription(result.getString("description"));
+		this.setCompleted(result.getBoolean("is_completed"));
 		this.setCreatedAt(result.getTimestamp("created_at"));
 	}
 
@@ -101,6 +117,7 @@ public class Task extends BaseModel {
 		fields.put("staff_id", this.getStaffId());
 		fields.put("title", this.getTitle());
 		fields.put("description", this.getDescription());
+		fields.put("is_completed", this.isCompleted());
 		fields.put("created_at", this.getCreatedAt());
 		
 		return fields;

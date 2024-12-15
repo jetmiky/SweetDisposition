@@ -11,7 +11,7 @@ public class Progress extends BaseModel {
 	private Integer id;
 	private Integer taskId;
 	private String description;
-	private boolean isCompleted;
+	private Boolean isCompleted;
 	private Date createdAt;
 
 	public Progress() {
@@ -55,7 +55,11 @@ public class Progress extends BaseModel {
 		this.description = description;
 	}
 
-	public boolean isCompleted() {
+	public Boolean getIsCompleted() {
+		return this.isCompleted();
+	}
+	
+	public Boolean isCompleted() {
 		return isCompleted;
 	}
 

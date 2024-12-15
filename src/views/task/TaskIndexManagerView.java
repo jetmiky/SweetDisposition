@@ -2,6 +2,8 @@ package views.task;
 
 import exceptions.FormException;
 import interfaces.ITaskController;
+
+import java.util.Date;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
@@ -41,12 +43,16 @@ public class TaskIndexManagerView extends BaseView {
 		TableColumn<Task, Integer> taskIdColumn = new TableColumn<>("ID");
 		TableColumn<Task, String> taskTitleColumn = new TableColumn<>("Title");
 		TableColumn<Task, String> taskDescriptionColumn = new TableColumn<>("Description");
+		TableColumn<Task, Boolean> taskCompletedColumn = new TableColumn<>("Task Completed");
+		TableColumn<Task, Date> taskCreatedAtColumn = new TableColumn<>("Created At");		
 
 		taskIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 		taskTitleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
 		taskDescriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-
-		table.getColumns().addAll(taskIdColumn, taskTitleColumn, taskDescriptionColumn);
+		taskCompletedColumn.setCellValueFactory(new PropertyValueFactory<>("isCompleted"));
+		taskCreatedAtColumn.setCellValueFactory(new PropertyValueFactory<>("createdAt"));
+		
+		table.getColumns().addAll(taskIdColumn, taskTitleColumn, taskDescriptionColumn, taskCompletedColumn, taskCreatedAtColumn);
 
 		HBox buttons = new HBox();
 		buttons.setSpacing(8);
