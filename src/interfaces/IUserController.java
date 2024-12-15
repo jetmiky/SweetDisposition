@@ -1,17 +1,19 @@
 package interfaces;
 
 import exceptions.FormException;
-import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import models.User;
 
 public interface IUserController {
 
-	public Scene index();
+	public Pane index();
 	
-	public Scene create();
+	public Pane create();
 
 	public void store(String name, String email, String role, String password) throws FormException;
 
-	public void deleteUser(Integer id);
+	public void update(User user) throws FormException;
 
-	public boolean updateUserRole(Integer id, String newRole);
+	public void delete(User user) throws FormException;
+
 }

@@ -61,10 +61,14 @@ public class QueryBuilder<T extends BaseModel> {
 	}
 
 	public QueryBuilder<T> select() {
+		return this.select("*");
+	}
+	
+	public QueryBuilder<T> select(String columns) {
 		this.reset();
-		this.baseQuery.append("SELECT * FROM ").append(this.table);
+		this.baseQuery.append("SELECT " + columns + " FROM ").append(this.table);
 
-		return this;
+		return this;		
 	}
 
 	public QueryBuilder<T> where(String column, Object value) {
@@ -174,12 +178,11 @@ public class QueryBuilder<T extends BaseModel> {
 			Timestamp timestamp = new Timestamp(time);
 			
 			preparedStatement.setTimestamp(paramIndex, timestamp);
-		}
-		else {
-			preparedStatement.setObject(paramIndex, value);
+		} else {
+			preparedStatement.setNull(paramIndex, java.sql.Types.NULL);
 		}
 	}
-
+	
 	public ArrayList<T> get() {
 		ArrayList<T> entities = new ArrayList<>();
 

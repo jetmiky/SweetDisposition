@@ -3,7 +3,7 @@ package controllers;
 import exceptions.FormException;
 import interfaces.ITaskController;
 import java.util.List;
-import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import models.Task;
 import models.User;
 import views.task.TaskFormView;
@@ -21,66 +21,52 @@ public class TaskController extends BaseController implements ITaskController {
 
 		return instance;
 	}
-	
-	public Scene manager() {
+
+	@Override
+	public Pane manager() {
 		User user = auth().user();
 		List<Task> tasks = db().tasks().select().where("manager_id", user.getId()).get();
-		
-		TaskIndexManagerView view = new TaskIndexManagerView(this);
-		view.data("tasks", tasks);
-		
-		return view.render();
+
+		return new TaskIndexManagerView(this, tasks).render();
 	}
-	
-	public Scene staff() {
+
+	@Override
+	public Pane staff() {
 		User user = auth().user();
 		List<Task> tasks = db().tasks().select().where("staff_id", user.getId()).get();
-		
-		TaskIndexStaffView view = new TaskIndexStaffView(this);
-		view.data("tasks", tasks);
-		
-		return view.render();
+
+		return new TaskIndexStaffView(this, tasks).render();
 	}
 
-	public Scene create() {
-		
-		TaskFormView view = new TaskFormView(this);
-		return view.render();
+	@Override
+	public Pane create() {
+		User manager = auth().user();
+		List<User> staffs = db().users().getStaffs(manager);
+
+		return new TaskFormView(this, staffs).render();
 	}
-	
-	// Store a new task and assign it to a staff member
-    @Override
-    public void store(String title, String description, Integer staffId) throws FormException {
-        if (staffId == null) {
-            throw new FormException("Staff ID is required to assign the task.");
-        }
 
-        // Ambil user yang sedang login sebagai manager
-        User user = auth().user();
-        Integer managerId = user.getId();
+	@Override
+	public void store(String title, String description, User staff) throws FormException {
+		if (title.isBlank())
+			throw new FormException("Title cannot be empty");
+		if (description.isBlank())
+			throw new FormException("Description cannot be empty");
 
-        // Status default untuk task baru
-        String defaultStatus = "ongoing";
+		User manager = auth().user();
+		Task task = new Task(manager.getId(), staff.getId(), title, description);
 
-        // Membuat objek Task
-        Task task = new Task(managerId, staffId, title, description);
+		db().tasks().save(task);
 
-        // Simpan task ke database
-        db().tasks().save(task);
+		screen().redirect("tasks.index.manager");
+	}
 
-        // Redirect ke halaman daftar task
-        screen().redirect("tasks.index.manager");
-    }
+	@Override
+	public void delete(Task task) throws FormException {
+		if (task == null)
+			throw new FormException("Please select a task to delete");
 
-    // Delete task by ID
-    public boolean deleteTask(int taskId) {
-        boolean success = db().tasks().delete(taskId);
-
-        if (success) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+		db().tasks().delete(task);
+	}
 
 }

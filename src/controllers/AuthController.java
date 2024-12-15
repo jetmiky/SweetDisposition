@@ -3,7 +3,7 @@ package controllers;
 import exceptions.AuthException;
 import exceptions.FormException;
 import interfaces.IAuthController;
-import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import models.User;
 import views.auth.LoginView;
 
@@ -20,12 +20,15 @@ public class AuthController extends BaseController implements IAuthController {
 	}
 
 	@Override
-	public Scene login() {
+	public Pane login() {
 		return new LoginView(this).render();
 	}
 
 	@Override
 	public void attemptLogin(String email, String password) throws AuthException, FormException {
+		if (email.isBlank()) throw new FormException("Email cannot be empty");
+		if (password.isBlank()) throw new FormException("Password cannot be empty");
+		
 		User user = db().users().select().where("email", email).first();
 
 		if (user.exists() && user.isPasswordMatched(password)) {
@@ -35,7 +38,7 @@ public class AuthController extends BaseController implements IAuthController {
 			String role = user.getRole();
 			String path = "";
 
-			switch (role) {
+			switch (role.toLowerCase()) {
 			case "admin":
 				path = "users.index";
 				break;
@@ -48,7 +51,7 @@ public class AuthController extends BaseController implements IAuthController {
 			default:
 				break;
 			}
-			
+
 			screen().redirect(path);
 
 		} else {

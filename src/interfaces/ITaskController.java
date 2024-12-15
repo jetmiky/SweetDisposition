@@ -1,16 +1,19 @@
 package interfaces;
 
 import exceptions.FormException;
-import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import models.Task;
+import models.User;
 
 public interface ITaskController {
 
-	// View the task creation form
-    public Scene create();
+	public Pane manager();
 
-    // Store a new task and assign to a specific staff
-    public void store(String title, String description, Integer staffId) throws FormException;
+	public Pane staff();
 
-    // Delete a task by ID
-    public boolean deleteTask(int taskId);
+	public Pane create();
+
+	public void store(String title, String description, User staff) throws FormException;
+
+	public void delete(Task task) throws FormException;
 }

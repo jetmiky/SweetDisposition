@@ -5,7 +5,6 @@ import exceptions.FormException;
 import interfaces.IAuthController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -15,12 +14,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import views.BaseView;
+import views.components.AlertComponent;
 
 public class LoginView extends BaseView {
 
@@ -30,27 +31,15 @@ public class LoginView extends BaseView {
 		this.controller = controller;
 	}
 
-	public Scene render() {
+	public Pane render() {
 		// Menu bar
 		HBox menuBar = new HBox(10);
 		menuBar.setPadding(new Insets(10));
 		menuBar.setStyle("-fx-background-color: #1565C0;");
 
 		Button loginMenuButton = new Button("Sweet Disposition");
-//        Button registerMenuButton = new Button("Register");
 		styleMenuButton(loginMenuButton);
-//        styleMenuButton(registerMenuButton);
-
 		menuBar.getChildren().addAll(loginMenuButton);
-		// Botton
-		HBox bottomBar = new HBox(6);
-		bottomBar.setPadding(new Insets(10));
-		bottomBar.setStyle("-fx-background-color: #1565C0;");
-
-		Text bottomText = new Text("Created with love and passion");
-		bottomText.setFill(Color.WHITE);
-		bottomBar.getChildren().addAll(bottomText);
-		bottomBar.setAlignment(Pos.CENTER);
 
 		// Login form
 		VBox loginFormContainer = new VBox(20);
@@ -89,7 +78,7 @@ public class LoginView extends BaseView {
 			try {
 				this.controller.attemptLogin(username, password);
 			} catch (AuthException | FormException error) {
-				System.err.println(error.getMessage());
+				AlertComponent.error("Gagal", error.getMessage());
 			}
 		});
 
@@ -124,10 +113,10 @@ public class LoginView extends BaseView {
 
 		// Main layout
 		BorderPane layout = new BorderPane();
+		
 		layout.setTop(menuBar);
 		layout.setLeft(loginFormContainer);
 		layout.setCenter(imagePlaceholder);
-		layout.setBottom(bottomBar);
 
 		BorderPane.setAlignment(loginFormContainer, Pos.CENTER_LEFT);
 		BorderPane.setAlignment(imagePlaceholder, Pos.CENTER_RIGHT);
@@ -135,9 +124,7 @@ public class LoginView extends BaseView {
 		layout.setLeft(loginFormContainer);
 		layout.setCenter(imagePlaceholder);
 
-		Scene scene = new Scene(layout, 1000, 600); // Stretched to full width and height
-
-		return scene;
+		return layout;
 	}
 
 	private void styleMenuButton(Button button) {

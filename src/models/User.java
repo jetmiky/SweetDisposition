@@ -18,12 +18,20 @@ public class User extends BaseModel {
 
 	public User() {
 	}
-
+	
 	public User(String name, String email, String role, String password) {
 		this.setName(name);
 		this.setEmail(email);
 		this.setRole(role);
 		this.setPassword(password);
+	}
+
+	public User(String name, String email, String role, String password, User manager) {
+		this.setName(name);
+		this.setEmail(email);
+		this.setRole(role);
+		this.setPassword(password);
+		this.setSupervisorId(manager.getId());
 	}
 
 	public Integer getId() {
@@ -51,11 +59,11 @@ public class User extends BaseModel {
 	}
 
 	public String getRole() {
-		return role;
+		return StringHelper.capitalizeFirstLetter(this.role);
 	}
 
 	public void setRole(String role) {
-		this.role = role;
+		this.role = role.toLowerCase();
 	}
 	
 	public void setPassword(String password) {
@@ -73,7 +81,16 @@ public class User extends BaseModel {
 	public void setSupervisorId(Integer supervisorId) {
 		this.supervisorId = supervisorId;
 	}
+	
+	public void setSupervisor(User manager) {
+		this.supervisorId = manager.getId();
+	}
 
+	@Override
+	public String toString() {
+	    return this.getName();
+	}
+	
 	@Override
 	public void fillPropertiesFromSQLResultSet(ResultSet result) throws SQLException {
 		this.setId(result.getInt("id"));
@@ -81,6 +98,7 @@ public class User extends BaseModel {
 		this.setEmail(result.getString("email"));
 		this.setRole(result.getString("role"));
 		this.password = result.getString("password");
+		this.setSupervisorId(result.getInt("supervisor_id"));
 	}
 
 	@Override
@@ -92,6 +110,12 @@ public class User extends BaseModel {
 		fields.put("email", this.getEmail());
 		fields.put("role", this.getRole());
 		fields.put("password", this.password);
+		
+		if (this.getSupervisorId() == null || this.getSupervisorId() == 0) {			
+			fields.put("supervisor_id", null);
+		} else {
+			fields.put("supervisor_id", this.getSupervisorId());
+		}
 
 		return fields;
 	}

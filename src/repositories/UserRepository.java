@@ -12,7 +12,7 @@ public class UserRepository extends BaseRepository<User> {
 
 	private static final String TABLE_NAME = "users";
 	private static final String PRIMARY_KEY = "id";
-	private static final String[] TABLE_PROPERTIES = { "id", "name", "email", "password" };
+	private static final String[] TABLE_PROPERTIES = { "id", "name", "email", "password", "supervisor_id" };
 
 	public static UserRepository getInstance() {
 		if (instance == null) {
@@ -61,8 +61,7 @@ public class UserRepository extends BaseRepository<User> {
 		return this.delete(id);
 	}
 
-	// Metode baru untuk mendapatkan daftar pengguna dengan role 'staff'
-	public List<User> getStaffList() {
-		return this.select().where("role", "staff").get();
+	public List<User> getStaffs(User manager) {
+		return this.select().where("role", "staff").where("supervisor_id", manager.getId()).get();
 	}
 }

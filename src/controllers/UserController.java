@@ -5,7 +5,9 @@ import java.util.List;
 import exceptions.FormException;
 import interfaces.IUserController;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import models.User;
+import utils.StringHelper;
 import views.auth.UserFormView;
 import views.auth.UserIndexView;
 
@@ -20,50 +22,50 @@ public class UserController extends BaseController implements IUserController {
 		return instance;
 	}
 
-	public Scene index() {
+	public Pane index() {
 		List<User> users = db().users().getAll();
-		
-		UserIndexView view = new UserIndexView(this);
-		view.data("users", users);
-		
-		return view.render();
+
+		return new UserIndexView(this, users).render();
 	}
 
-	public Scene create() {
-		UserFormView view = new UserFormView(this);
-		return view.render();
+	public Pane create() {
+		return new UserFormView(this).render();
 	}
 
 	@Override
 	public void store(String name, String email, String role, String password) throws FormException {
+		if (name.isBlank())
+			throw new FormException("Name cannot be empty");
+		if (email.isBlank())
+			throw new FormException("Email cannot be empty");
+		if (!StringHelper.isValidEmail(email))
+			throw new FormException("Provide a valid email");
+		if (password.isBlank())
+			throw new FormException("Password cannot be empty");
+		if (password.length() < 8)
+			throw new FormException("Password should be minimum 8 characters long");
+
 		User user = new User(name, email, role, password);
-
+		
 		db().users().save(user);
-
+		
 		screen().redirect("users.index");
 	}
-	
+
 	@Override
-	public void deleteUser(Integer id) {
-		// TODO Auto-generated method stub
-		
+	public void update(User user) throws FormException {
+		if (user == null)
+			throw new FormException("Please select a user to update");
+
+		db().users().save(user);
 	}
 
 	@Override
-	public boolean updateUserRole(Integer id, String newRole) {
-	    if (id == null || newRole == null || newRole.isEmpty()) {
-	        return false;
-	    }
-	    User user = db().users().get(id);
-	    if (user != null) {
-	        user.setRole(newRole);
-	        db().users().save(user);
-	        return true;
-	    }
-	    return false;
+	public void delete(User user) throws FormException {
+		if (user == null)
+			throw new FormException("Please select a user to delete");
+
+		db().users().delete(user);
 	}
 
-	public boolean deleteUserConfirmation(Integer id) {
-		return false;
-	}
 }

@@ -1,6 +1,6 @@
 package views;
 
-import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -17,13 +17,13 @@ public class ErrorView extends BaseView {
 	}
 	
 	@Override
-	public Scene render() {
+	public Pane render() {
 		VBox container = new VBox();
 		Text text = new Text(this.message);
 		
 		container.getChildren().add(text);
 		
-		return new Scene(container);
+		return container;
 	}
 	
 }

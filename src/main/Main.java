@@ -19,15 +19,15 @@ public class Main extends Application {
 	}
 
 	@Override
-	public void start(Stage stage) throws URISyntaxException {
+	public void start(Stage stage) {
 		Thread.currentThread().setUncaughtExceptionHandler((thread, throwable) -> {
-			System.err.println("Global exception handler: " + throwable.getMessage());
+			System.err.println("Uncaught error: " + throwable.getMessage());
 		});
 
 		initializeRoutes(stage);
-
+		setStageIcon(stage, "/resources/icons.png");
+		
 		ScreenService.getInstance().redirect("auth.login");
-		stage.getIcons().add(new Image((getClass().getResource("/resources/icons.png").toURI().toString())));
 		
 		stage.setTitle(APP_NAME);
 		stage.show();
@@ -46,6 +46,14 @@ public class Main extends Application {
 		screen.register("tasks.index.staff", TaskController.getInstance(), "staff");
 		screen.register("tasks.create", TaskController.getInstance(), "create");
 		screen.register("tasks.view", TaskController.getInstance(), "view");
+	}
+	
+	public void setStageIcon(Stage stage, String path) {
+		try {			
+			stage.getIcons().add(new Image(getClass().getResource(path).toURI().toString()));
+		} catch (URISyntaxException error) {
+			System.err.println("Error setting icon: " + error.getMessage());
+		}
 	}
 
 }

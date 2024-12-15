@@ -1,11 +1,8 @@
 package views.auth;
 
-import java.util.List;
-
 import exceptions.FormException;
 import interfaces.IUserController;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,50 +18,48 @@ import javafx.stage.Stage;
 import models.User;
 import views.components.AlertComponent;
 
-public class UserAssignStaff {
+public class UserAssignRole {
 
 	private final IUserController controller;
 	private final User user;
-	private final ObservableList<User> managers;
 
-	public UserAssignStaff(IUserController controller, User user, List<User> managers) {
+	public UserAssignRole(IUserController controller, User user) {
 		this.controller = controller;
 		this.user = user;
-		this.managers = FXCollections.observableArrayList(managers);
 	}
 
 	public void show() {
 		Stage modal = new Stage();
 		modal.initModality(Modality.APPLICATION_MODAL);
-		modal.setTitle("Assign Staff to Manager");
+		modal.setTitle("Change user role");
 
 		// Title
-		Text title = new Text("Assign Staff");
+		Text title = new Text("Assign Role");
 		title.setFont(Font.font("Arial", FontWeight.BOLD, 20));
 
 		// User Details
 		Text userDetails = new Text("User: " + user.getName() + " (" + user.getRole() + ")");
 		userDetails.setFont(Font.font("Arial", 16));
 
-		// Manager selection
-		ComboBox<User> managerComboBox = new ComboBox<>(this.managers);
-		managerComboBox.getSelectionModel().selectFirst();
+		// Role selection
+		ComboBox<String> roleComboBox = new ComboBox<>(FXCollections.observableArrayList("Staff", "Manager"));
+		roleComboBox.getSelectionModel().select(user.getRole());
 
 		// Buttons
 		Button saveButton = new Button("Save");
 		saveButton.setStyle(
 				"-fx-background-color: #1E88E5; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;");
 		saveButton.setOnAction(e -> {
-			User manager = managerComboBox.getSelectionModel().getSelectedItem();
-			user.setSupervisor(manager);
-
+			String newRole = roleComboBox.getSelectionModel().getSelectedItem();
+			user.setRole(newRole);
+			
 			try {
 				controller.update(user);
-				AlertComponent.success("Berhasil", "Berhasil assign staff ke manager");
+				AlertComponent.success("Berhasil", "Berhasil di-update");
 			} catch (FormException error) {
 				AlertComponent.error("Gagal", error.getMessage());
 			}
-
+			
 			modal.close();
 		});
 
@@ -76,7 +71,7 @@ public class UserAssignStaff {
 		HBox buttonBar = new HBox(10, saveButton, cancelButton);
 		buttonBar.setAlignment(Pos.CENTER);
 
-		VBox layout = new VBox(20, title, userDetails, managerComboBox, buttonBar);
+		VBox layout = new VBox(20, title, userDetails, roleComboBox, buttonBar);
 		layout.setPadding(new Insets(20));
 		layout.setAlignment(Pos.CENTER);
 

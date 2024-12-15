@@ -1,309 +1,199 @@
 package views.auth;
 
-import interfaces.IAuthController;
+import exceptions.FormException;
 import interfaces.IUserController;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import controllers.UserController;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import models.User;
-import repositories.UserRepository;
 import views.BaseView;
-import views.components.MenuComponent;
+import views.components.AlertComponent;
 
 public class UserIndexView extends BaseView {
 
-    private IUserController controller;
-    private TableView<User> table;
-    private List<User> allUsers;
+	private IUserController controller;
+	private TableView<User> table;
+	private ObservableList<User> users;
 
-    public UserIndexView(IUserController controller) {
-        this.controller = controller;
-    }
+	public UserIndexView(IUserController controller, List<User> users) {
+		this.controller = controller;
+		this.users = FXCollections.observableArrayList(users);
+	}
 
-    @Override
-    public Scene render() {
-        // Menu bar
-        MenuBar menu = MenuComponent.getInstance().render();
+	@Override
+	public Pane render() {
+		Text title = new Text("Hello, Admin");
+		title.setFont(new Font("Open Sans", 30));
+		title.setFill(Color.BLACK);
 
-        // Header section
-        Text title = new Text("Hallo, Admin");
-        title.setFont(new Font("Open Sans", 30));
-        title.setFill(Color.BLACK);
+		Button addUserButton = new Button("Tambah User");
+		addUserButton.setStyle("-fx-background-color: #1E88E5; " + " -fx-text-fill: white; " + "-fx-font-size: 14px; "
+				+ "-fx-font-weight: bold; " + "-fx-background-radius: 5px;");
 
-        Button addUserButton = new Button("Tambah User");
-        addUserButton.setStyle(
-            "-fx-background-color: #1E88E5; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;"
-        );
-        addUserButton.setOnAction(e -> {
-            // Create a new Stage for the modal
-            Stage modal = new Stage();
-            modal.initModality(Modality.APPLICATION_MODAL); // Make it modal
-            modal.setTitle("Tambah User");
-            
-            // Create a new UserFormView and pass the controller
-            UserFormView formView = new UserFormView(controller);
-            Scene formScene = formView.render();
+		addUserButton.setOnAction(e -> screen().redirect("users.create"));
 
-            // Set the scene for the modal stage
-            modal.setScene(formScene);
-            modal.setResizable(false); // Optional: Disable resizing
-            modal.showAndWait(); // Show the modal and wait for it to close
-        	
-        });
-        addUserButton.setOnAction(e -> screen().redirect("users.create"));
+		HBox header = new HBox(20);
+		header.getChildren().addAll(title, addUserButton);
+		header.setAlignment(Pos.CENTER_LEFT);
 
-        HBox header = new HBox(20, title, addUserButton);
-        header.setAlignment(Pos.CENTER_LEFT);
-//        header.setPadding(new Insets(10));
+		// Search bar
+		TextField searchField = new TextField();
+		searchField.setPromptText("Cari User");
+		searchField.setPrefWidth(300);
 
-//        // Cards for totals
-//        int totalAdmins = (int) allUsers.stream().filter(user -> "Admin".equals(user.getRole())).count();
-//        int totalManagers = (int) allUsers.stream().filter(user -> "Manager".equals(user.getRole())).count();
-//        int totalStaff = (int) allUsers.stream().filter(user -> "Staff".equals(user.getRole())).count();
-//
-//        Text adminCard = createCard("Total Admins", totalAdmins);
-//        Text managerCard = createCard("Total Managers", totalManagers);
-//        Text staffCard = createCard("Total Staff", totalStaff);
-//
-//        HBox cards = new HBox(20, adminCard, managerCard, staffCard);
-//        cards.setAlignment(Pos.CENTER);
-//        cards.setPadding(new Insets(10));
-        
-        
-        // Search bar
-        TextField searchField = new TextField();
-        searchField.setPromptText("Cari User");
-        searchField.setPrefWidth(300);
+		Button searchButton = new Button("Cari");
+		searchButton.setStyle(
+				"-fx-background-color: #1E88E5; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;");
+		searchButton.setOnAction(e -> {
+			String query = searchField.getText().toLowerCase();
+			List<User> filteredUsers = users.stream().filter(user -> user.getName().toLowerCase().contains(query))
+					.collect(Collectors.toList());
+			table.setItems(FXCollections.observableArrayList(filteredUsers));
+		});
 
-        Button searchButton = new Button("Cari");
-        searchButton.setStyle(
-            "-fx-background-color: #1E88E5; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;"
-        );
-        searchButton.setOnAction(e -> {
-            String query = searchField.getText().toLowerCase();
-            List<User> filteredUsers = allUsers.stream()
-                .filter(user -> user.getName().toLowerCase().contains(query))
-                .collect(Collectors.toList());
-            table.setItems(FXCollections.observableArrayList(filteredUsers));
-        });
+		HBox searchBar = new HBox(10, searchField, searchButton);
+		searchBar.setAlignment(Pos.CENTER_RIGHT);
 
-        HBox searchBar = new HBox(10, searchField, searchButton);
-        searchBar.setAlignment(Pos.CENTER_RIGHT);
-//        searchBar.setPadding(new Insets(10));
+		// Table view
+		int totalAdmins = 0, totalManagers = 0, totalStaff = 0;
+		if (users != null && !users.isEmpty()) {
+			totalAdmins = (int) users.stream().filter(user -> "admin".equals(user.getRole())).count();
+			totalManagers = (int) users.stream().filter(user -> "manager".equals(user.getRole())).count();
+			totalStaff = (int) users.stream().filter(user -> "staff".equals(user.getRole())).count();
+		}
 
-        // Table view
-        allUsers = (ArrayList<User>) this.data.getOrDefault("users", new ArrayList<User>());
-        int totalAdmins = 0, totalManagers = 0, totalStaff = 0;
-        if (allUsers != null && !allUsers.isEmpty()) {
-            totalAdmins = (int) allUsers.stream().filter(user -> "admin".equals(user.getRole())).count();
-            totalManagers = (int) allUsers.stream().filter(user -> "manager".equals(user.getRole())).count();
-            totalStaff = (int) allUsers.stream().filter(user -> "staff".equals(user.getRole())).count();
-        }
-        
-     // Create and display the cards with text inside the rectangles
-        HBox adminCard = createCard(totalAdmins, "  Admins");
-        HBox managerCard = createCard(totalManagers, "  Managers");
-        HBox staffCard = createCard(totalStaff, "  Staff");
+		// Create and display the cards with text inside the rectangles
+		HBox adminCard = createCard(totalAdmins, "  Admins");
+		HBox managerCard = createCard(totalManagers, "  Managers");
+		HBox staffCard = createCard(totalStaff, "  Staff");
 
-        HBox cards = new HBox(20, adminCard, managerCard, staffCard);
-        cards.setAlignment(Pos.CENTER_LEFT);
-        cards.setPadding(new Insets(10));
+		HBox cards = new HBox(20, adminCard, managerCard, staffCard);
+		cards.setAlignment(Pos.CENTER_LEFT);
+		cards.setPadding(new Insets(10));
 
-        
-        
-        
-        table = new TableView<>(FXCollections.observableArrayList(allUsers));
-        table.setStyle("-fx-border-color: purple; -fx-border-width: 2px;");
+		table = new TableView<>(users);
+		table.setStyle("-fx-border-color: purple; -fx-border-width: 2px;");
 
-        TableColumn<User, String> noColumn = new TableColumn<>("No");
-        TableColumn<User, String> nameColumn = new TableColumn<>("Nama");
-        TableColumn<User, String> emailColumn = new TableColumn<>("Email");
-        TableColumn<User, String> roleColumn = new TableColumn<>("Role");
-        TableColumn<User, Void> actionsColumn = new TableColumn<>("Actions");
+		TableColumn<User, String> noColumn = new TableColumn<>("No");
+		TableColumn<User, String> nameColumn = new TableColumn<>("Nama");
+		TableColumn<User, String> emailColumn = new TableColumn<>("Email");
+		TableColumn<User, String> roleColumn = new TableColumn<>("Role");
 
-        noColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
-        roleColumn.setCellValueFactory(new PropertyValueFactory<>("role"));
+		noColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+		emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+		roleColumn.setCellValueFactory(new PropertyValueFactory<>("role"));
 
-        // Style and add action buttons
-        actionsColumn.setCellFactory(col -> new TableCellWithActions());
+		table.getColumns().addAll(noColumn, nameColumn, emailColumn, roleColumn);
+		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        table.getColumns().addAll(noColumn, nameColumn, emailColumn, roleColumn, actionsColumn);
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		Button assignStaffButton = new Button("Assign Staff to Manager");
+		assignStaffButton.setOnAction(e -> {
+			try {
+				User user = table.getSelectionModel().getSelectedItem();
+				List<User> managers = users.stream().filter(u -> u.getRole().equalsIgnoreCase("manager"))
+						.collect(Collectors.toList());
+				
+				if (user == null || !user.getRole().equalsIgnoreCase("staff"))
+					throw new FormException("Please select a staff to be assigned");
 
-        // Container layout
-        VBox container = new VBox(menu, header, cards, searchBar, table);
-        container.setSpacing(10);
-        container.setPadding(new Insets(10));
-        container.setStyle("-fx-background-color: #f1f5f9;");
+				new UserAssignStaff(controller, user, managers).show();
+			} catch (FormException error) {
+				AlertComponent.error("Gagal", error.getMessage());
+			}
+		});
 
-        return new Scene(container, 1000, 600);
-    }
+		Button assignRoleButton = new Button("Assign Role");
+		assignRoleButton.setOnAction(e -> {
+			try {
+				User user = table.getSelectionModel().getSelectedItem();
 
-    private class TableCellWithActions extends javafx.scene.control.TableCell<User, Void> {
-        @Override
-        protected void updateItem(Void item, boolean empty) {
-            super.updateItem(item, empty);
-            if (empty) {
-                setGraphic(null);
-                return;
-            }
+				if (user == null) {
+					throw new FormException("Please select a user to change role");
+				}
 
-            User user = getTableView().getItems().get(getIndex());
-            Button editButton = new Button("Edit");
-            editButton.setStyle(
-                "-fx-background-color: #1E88E5; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 3px;"
-            );
-            editButton.setOnAction(e -> {
-                // Tampilkan modal untuk edit user
-                new UserAssignStaff(controller, user).show();
+				new UserAssignRole(controller, user).show();
+				table.refresh();
+			} catch (FormException error) {
+				AlertComponent.error("Gagal", error.getMessage());
+			}
+		});
 
-                // Dapatkan data terbaru setelah modal ditutup
-                String newRole = user.getRole();
-                Integer id = user.getId();
+		Button deleteButton = new Button("Delete User");
+		deleteButton.setOnAction(e -> {
+			User user = table.getSelectionModel().getSelectedItem();
 
-                // Update role user
-                Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-                confirmationAlert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                boolean isUpdated = UserController.getInstance().updateUserRole(id, newRole);
-                if (isUpdated) {
-                    Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-                    successAlert.setTitle("Update Berhasil");
-                    successAlert.setHeaderText(null);
-                    successAlert.setContentText("Pengguna berhasil diupdate!");
-                    successAlert.showAndWait();
+			AlertComponent.confirm("Konfirmasi Hapus", "Anda yakin ingin menghapus " + user.getName() + "?")
+					.ifPresent(response -> {
+						if (response == ButtonType.OK) {
+							try {
+								controller.delete(user);
+								users.remove(user);
+								
+								AlertComponent.success("Berhasil", "Pengguna berhasil dihapus!");
+							} catch (FormException error) {
+								AlertComponent.error("Gagal", error.getMessage());
+							}
+						}
+					});
+		});
 
-                    // Perbarui data tabel
-                    allUsers = UserRepository.getInstance().getAll();
-                    table.setItems(FXCollections.observableArrayList(allUsers));
-                } else {
-                    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                    errorAlert.setTitle("Update Gagal");
-                    errorAlert.setHeaderText(null);
-                    errorAlert.setContentText("Terjadi kesalahan saat mengupdate pengguna.");
-                    errorAlert.showAndWait();
-                }
-                table.refresh();
-            }
-        });
-            });
+		HBox buttons = new HBox();
+		buttons.setSpacing(10);
+		buttons.getChildren().addAll(assignRoleButton, assignStaffButton, deleteButton);
 
+		// Container layout
+		VBox container = new VBox(header, cards, searchBar, table, buttons);
+		container.setSpacing(10);
+		container.setPadding(new Insets(10));
+		container.setStyle("-fx-background-color: #f1f5f9;");
 
+		return container;
+	}
 
+	private HBox createCard(int count, String title) {
+		// Create a rectangle to act as the card background
+		javafx.scene.shape.Rectangle cardBackground = new javafx.scene.shape.Rectangle(200, 80);
+		cardBackground.setStyle("-fx-background-color: #dcefff");
+		cardBackground.setArcWidth(10); // Rounded corners
+		cardBackground.setArcHeight(10);
 
-            Button deleteButton = new Button("Delete");
-            deleteButton.setStyle(
-                "-fx-background-color: #E53935; -fx-text-fill: white; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 3px;"
-            );
-            deleteButton.setOnAction(e -> {
-                controller.deleteUser(user.getId());
-                Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-                confirmationAlert.setTitle("Konfirmasi Penghapusan");
-                confirmationAlert.setHeaderText("Anda yakin ingin menghapus pengguna ini?");
-                confirmationAlert.setContentText("Pengguna dengan nama: " + user.getName() + " akan dihapus.");
+		// Create the text to display inside the card
+		Text cardText = new Text(count + title);
+		cardText.setFont(new Font("Open Sans", 18));
+		cardText.setFill(Color.DARKBLUE);
 
-                confirmationAlert.showAndWait().ifPresent(response -> {
-                    if (response == ButtonType.OK) {
-                        boolean isDeleted = getTableView().getItems().remove(user); // Memanggil metode hapus di controller
-                        if (isDeleted) {
-                            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-                            successAlert.setTitle("Penghapusan Berhasil");
-                            successAlert.setHeaderText(null);
-                            successAlert.setContentText("Pengguna berhasil dihapus!");
-                            successAlert.showAndWait();
-                            UserRepository.getInstance().delete(user);
-                        } else {
-                            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                            errorAlert.setTitle("Penghapusan Gagal");
-                            errorAlert.setHeaderText(null);
-                            errorAlert.setContentText("Terjadi kesalahan saat menghapus pengguna.");
-                            errorAlert.showAndWait();
-                        }
-                    }
-                });
-            });
-            
-            HBox actionButtons = new HBox(5, editButton, deleteButton);
-            actionButtons.setAlignment(Pos.CENTER);
+		// Create a VBox to center the text inside the rectangle
+		VBox cardContent = new VBox(cardText);
+		cardContent.setAlignment(Pos.CENTER); // Center the text
+		cardContent.setPrefWidth(200);
+		cardContent.setPrefHeight(80);
+		cardContent.setStyle("-fx-padding: 10px;"); // Add some padding to prevent the text from touching the edges
 
-            setGraphic(actionButtons);
-        }
-    }
+		// Set the background rectangle size and place it behind the text
+		cardContent.setStyle("-fx-background-color: #dcefff; -fx-border-radius: 10px; -fx-background-radius: 10px;");
 
-    private HBox createCard(int count, String title) {
-        // Create a rectangle to act as the card background
-        javafx.scene.shape.Rectangle cardBackground = new javafx.scene.shape.Rectangle(200, 80);
-        cardBackground.setStyle("-fx-background-color: #dcefff");
-        cardBackground.setArcWidth(10);  // Rounded corners
-        cardBackground.setArcHeight(10);
+		// Combine the rectangle and text into a single card container
+		HBox card = new HBox(cardContent);
+		card.setAlignment(Pos.CENTER);
+		card.setPrefSize(200, 80); // Define the card size
 
-        // Create the text to display inside the card
-        Text cardText = new Text(count + title);
-        cardText.setFont(new Font("Open Sans", 18));
-        cardText.setFill(Color.DARKBLUE);
+		return card;
+	}
 
-        // Create a VBox to center the text inside the rectangle
-        VBox cardContent = new VBox(cardText);
-        cardContent.setAlignment(Pos.CENTER);  // Center the text
-        cardContent.setPrefWidth(200);
-        cardContent.setPrefHeight(80);
-        cardContent.setStyle("-fx-padding: 10px;");  // Add some padding to prevent the text from touching the edges
-
-        // Set the background rectangle size and place it behind the text
-        cardContent.setStyle("-fx-background-color: #dcefff; -fx-border-radius: 10px; -fx-background-radius: 10px;");
-
-        // Combine the rectangle and text into a single card container
-        HBox card = new HBox(cardContent);
-        card.setAlignment(Pos.CENTER);
-        card.setPrefSize(200, 80);  // Define the card size
-        
-        return card;
-    }
-
-
-    private VBox createCardWithTextAbove(String title, int count) {
-        // Create the text to display above the card
-        Text cardText = new Text(count + title);
-        
-        cardText.setFont(new Font("Open Sans", 18));
-        cardText.setFill(Color.DARKBLUE);
-
-        // Create a rectangle to act as the card background
-        javafx.scene.shape.Rectangle cardBackground = new javafx.scene.shape.Rectangle(200, 80);
-        cardBackground.setFill(Color.LIGHTBLUE);
-        cardBackground.setArcWidth(10);  // Rounded corners
-        cardBackground.setArcHeight(10);
-
-        // Arrange the text and rectangle in a VBox
-        VBox card = new VBox(10, cardText, cardBackground);
-        card.setAlignment(Pos.CENTER);
-        card.setPrefWidth(200);
-        card.setPrefHeight(120);  // Adjust the height to accommodate text and rectangle
-        return card;
-    }
-
-    
 }

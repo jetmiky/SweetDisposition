@@ -2,10 +2,14 @@ package utils;
 
 public class StringHelper {
 
-	private StringHelper() {
-
+	public static boolean isValidEmail(String email) {
+		for (String ch : email.split("")) {
+			if (ch.equals("@")) return true;
+		}
+		
+		return false;
 	}
-
+	
 	public static String hash(String text) {
 		int MAX_LENGTH = 254;
 		String result = "";
@@ -19,5 +23,10 @@ public class StringHelper {
 		}
 
 		return result;
+	}
+	
+	public static String capitalizeFirstLetter(String string) {
+	    String letter = string.substring(0, 1).toUpperCase();
+	    return letter + string.substring(1);
 	}
 }
