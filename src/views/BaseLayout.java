@@ -22,7 +22,7 @@ public class BaseLayout {
 	}
 	
 	public Scene render(Pane content) {
-		MenuBar menu = MenuComponent.getInstance().render();
+		MenuBar menu = new MenuComponent().render();
 		Pane footer = FooterComponent.getInstance().render();
 		
 		BorderPane container = new BorderPane();

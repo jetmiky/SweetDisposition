@@ -59,10 +59,4 @@ public class AuthController extends BaseController implements IAuthController {
 		}
 	}
 
-	@Override
-	public void logout() {
-		auth().setUser(null);
-		screen().redirect("auth.login");
-	}
-
 }

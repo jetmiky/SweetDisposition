@@ -39,7 +39,6 @@ public class Main extends Application {
 		ScreenService screen = ScreenService.getInstance();
 
 		screen.register("auth.login", AuthController.getInstance(), "login");
-		screen.register("auth.logout", AuthController.getInstance(), "logout");
 		screen.register("users.index", UserController.getInstance(), "index");
 		screen.register("users.create", UserController.getInstance(), "create");
 		screen.register("tasks.index.manager", TaskController.getInstance(), "manager");

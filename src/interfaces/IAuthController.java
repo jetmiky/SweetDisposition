@@ -10,5 +10,4 @@ public interface IAuthController {
 	
 	public void attemptLogin(String email, String password) throws AuthException, FormException;
 
-	public void logout();
 }
