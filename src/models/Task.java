@@ -4,7 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import repositories.ProgressRepository;
+import repositories.UserRepository;
 
 public class Task extends BaseModel {
 
@@ -95,6 +99,18 @@ public class Task extends BaseModel {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+	
+	public List<Progress> getProgresses() {
+		return ProgressRepository.getInstance().whereBelongsTo(this).get();
+	}
+	
+	public User getManager() {
+		return UserRepository.getInstance().whereManages(this).first();
+	}
+	
+	public User getStaff() {
+		return UserRepository.getInstance().whereAssigned(this).first();
 	}
 
 	@Override

@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import repositories.TaskRepository;
+
 public class Progress extends BaseModel {
 	
 	private Integer id;
@@ -73,6 +75,10 @@ public class Progress extends BaseModel {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	}
+	
+	public Task getTask() {
+		return TaskRepository.getInstance().whereOwns(this).first();
 	}
 
 	@Override

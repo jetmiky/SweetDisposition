@@ -3,6 +3,7 @@ package repositories;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.Task;
 import models.User;
 import utils.QueryBuilder;
 
@@ -60,8 +61,22 @@ public class UserRepository extends BaseRepository<User> {
 		Integer id = model.getId();
 		return this.delete(id);
 	}
-
-	public List<User> getStaffs(User manager) {
-		return this.select().where("role", "staff").where("supervisor_id", manager.getId()).get();
+	
+	public QueryBuilder<User> whereManages(Task task) {
+		return this.select().where(PRIMARY_KEY, task.getManagerId());
 	}
+	
+	public QueryBuilder<User> whereAssigned(Task task) {
+		return this.select().where(PRIMARY_KEY, task.getStaffId());
+	}
+
+	public QueryBuilder<User> whereOwns(User user) {
+		return this.select().where(PRIMARY_KEY, user.getSupervisorId());
+	}
+	
+	public QueryBuilder<User> whereBelongsTo(User user) {
+		return this.select().where("supervisor_id", user.getId());
+	}
+	
+	
 }

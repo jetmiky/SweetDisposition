@@ -1,7 +1,10 @@
 package repositories;
 
 import java.util.ArrayList;
+
+import models.Progress;
 import models.Task;
+import models.User;
 import utils.QueryBuilder;
 
 public class TaskRepository extends BaseRepository<Task> {
@@ -58,6 +61,18 @@ public class TaskRepository extends BaseRepository<Task> {
 	public boolean delete(Task model) {
 		Integer id = model.getId();
 		return this.delete(id);
+	}
+	
+	public QueryBuilder<Task> whereBelongsToManager(User user) {
+		return this.select().where("manager_id", user.getId());
+	}
+	
+	public QueryBuilder<Task> whereBelongsToStaff(User user) {
+		return this.select().where("staff_id", user.getId());
+	}
+	
+	public QueryBuilder<Task> whereOwns(Progress progress) {
+		return this.select().where(PRIMARY_KEY, progress.getTaskId());
 	}
 	
 }

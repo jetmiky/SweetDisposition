@@ -3,8 +3,11 @@ package models;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import repositories.TaskRepository;
+import repositories.UserRepository;
 import utils.StringHelper;
 
 public class User extends BaseModel {
@@ -18,7 +21,7 @@ public class User extends BaseModel {
 
 	public User() {
 	}
-	
+
 	public User(String name, String email, String role, String password) {
 		this.setName(name);
 		this.setEmail(email);
@@ -65,15 +68,15 @@ public class User extends BaseModel {
 	public void setRole(String role) {
 		this.role = role.toLowerCase();
 	}
-	
+
 	public void setPassword(String password) {
 		this.password = StringHelper.hash(password);
 	}
-	
+
 	public boolean isPasswordMatched(String password) {
 		return StringHelper.hash(password).equals(this.password);
 	}
-	
+
 	public Integer getSupervisorId() {
 		return supervisorId;
 	}
@@ -81,16 +84,32 @@ public class User extends BaseModel {
 	public void setSupervisorId(Integer supervisorId) {
 		this.supervisorId = supervisorId;
 	}
-	
+
 	public void setSupervisor(User manager) {
 		this.supervisorId = manager.getId();
 	}
 
 	@Override
 	public String toString() {
-	    return this.getName();
+		return this.getName();
 	}
 	
+	public User getSupervisor() {
+		return UserRepository.getInstance().whereOwns(this).first();
+	}
+
+	public List<User> getStaffs() {
+		return UserRepository.getInstance().whereBelongsTo(this).get();
+	}
+	
+	public List<Task> getTasks() {
+		if (this.getRole().toLowerCase().equals("manager")) {
+			return TaskRepository.getInstance().whereBelongsToManager(this).get();
+		}
+		
+		return TaskRepository.getInstance().whereBelongsToStaff(this).get();
+	}
+
 	@Override
 	public void fillPropertiesFromSQLResultSet(ResultSet result) throws SQLException {
 		this.setId(result.getInt("id"));
@@ -110,8 +129,8 @@ public class User extends BaseModel {
 		fields.put("email", this.getEmail());
 		fields.put("role", this.getRole());
 		fields.put("password", this.password);
-		
-		if (this.getSupervisorId() == null || this.getSupervisorId() == 0) {			
+
+		if (this.getSupervisorId() == null || this.getSupervisorId() == 0) {
 			fields.put("supervisor_id", null);
 		} else {
 			fields.put("supervisor_id", this.getSupervisorId());
