@@ -3,6 +3,7 @@ package views.auth;
 import exceptions.AuthException;
 import exceptions.FormException;
 import interfaces.IAuthController;
+import java.net.URISyntaxException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -45,6 +46,29 @@ public class LoginView extends BaseView {
 		VBox loginFormContainer = new VBox(20);
 		loginFormContainer.setPadding(new Insets(40));
 		loginFormContainer.setAlignment(Pos.CENTER);
+		loginFormContainer.setMaxHeight(300);
+        loginFormContainer.setStyle(
+                "-fx-background-color: white;" + // White background
+                "-fx-background-radius: 15px;" + // Rounded corners
+                "-fx-border-radius: 15px;" +
+                "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 5);" // Drop shadow
+        );
+        
+        //icons di loginForm
+		Image icons;
+		VBox icPlaceholder = new VBox();
+		icPlaceholder.setAlignment(Pos.CENTER);
+		try {
+			icons = new Image(getClass().getResource("/resources/logos.png").toURI().toString());
+			ImageView ic = new ImageView(icons);
+
+			ic.setFitWidth(200); // Adjusted to stretch full
+			ic.setPreserveRatio(true); // Keep the aspect ratio
+			ic.setSmooth(true);
+			icPlaceholder.getChildren().add(ic);
+		} catch (URISyntaxException e1) {
+			e1.printStackTrace();
+		}
 
 		Text formTitle = new Text("Login");
 		formTitle.setFont(Font.font("Arial", FontWeight.BOLD, 24));
@@ -82,13 +106,10 @@ public class LoginView extends BaseView {
 			}
 		});
 
-		Label forgotPassword = new Label("Forgot your password?");
-		forgotPassword.setTextFill(Color.GRAY);
-
-		VBox formActions = new VBox(10, signInButton, forgotPassword);
+		VBox formActions = new VBox(10, signInButton);
 		formActions.setAlignment(Pos.CENTER);
-
-		loginFormContainer.getChildren().addAll(formTitle, loginForm, formActions);
+	
+		loginFormContainer.getChildren().addAll(icPlaceholder, formTitle, loginForm, formActions);
 
 		// Image placeholder
 		VBox imagePlaceholder = new VBox();
@@ -115,14 +136,13 @@ public class LoginView extends BaseView {
 		BorderPane layout = new BorderPane();
 		
 		layout.setTop(menuBar);
-		layout.setLeft(loginFormContainer);
+		layout.setRight(loginFormContainer);
 		layout.setCenter(imagePlaceholder);
-
-		BorderPane.setAlignment(loginFormContainer, Pos.CENTER_LEFT);
+		layout.setStyle(("-fx-background-color: #dae4fe;"));
+		
+		BorderPane.setMargin(loginFormContainer, new Insets(0, 50, 0, 0)); 
+		BorderPane.setAlignment(loginFormContainer, Pos.CENTER);
 		BorderPane.setAlignment(imagePlaceholder, Pos.CENTER_RIGHT);
-
-		layout.setLeft(loginFormContainer);
-		layout.setCenter(imagePlaceholder);
 
 		return layout;
 	}

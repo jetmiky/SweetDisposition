@@ -41,13 +41,8 @@ public class Main extends Application {
 
 		screen.register("auth.login", AuthController.getInstance(), "login");
 		screen.register("users.index", UserController.getInstance(), "index");
-		screen.register("users.create", UserController.getInstance(), "create");
 		screen.register("tasks.index.manager", TaskController.getInstance(), "managerIndex");
 		screen.register("tasks.index.staff", TaskController.getInstance(), "staffIndex");
-		screen.register("tasks.show.manager", TaskController.getInstance(), "managerShow");
-		screen.register("tasks.show.staff", TaskController.getInstance(), "staffShow");
-		screen.register("tasks.create", TaskController.getInstance(), "create");
-		screen.register("progresses.create", ProgressController.getInstance(), "create");
 	}
 	
 	public void setStageIcon(Stage stage, String path) {

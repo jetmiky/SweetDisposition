@@ -4,11 +4,9 @@ import java.util.List;
 
 import exceptions.FormException;
 import interfaces.IUserController;
-import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import models.User;
 import utils.StringHelper;
-import views.auth.UserFormView;
 import views.auth.UserIndexView;
 
 public class UserController extends BaseController implements IUserController {
@@ -26,10 +24,6 @@ public class UserController extends BaseController implements IUserController {
 		List<User> users = db().users().getAll();
 
 		return new UserIndexView(this, users).render();
-	}
-
-	public Pane create() {
-		return new UserFormView(this).render();
 	}
 
 	@Override
@@ -51,8 +45,6 @@ public class UserController extends BaseController implements IUserController {
 
 		user = new User(name, email, role, password);
 		db().users().save(user);
-
-		screen().redirect("users.index");
 	}
 
 	@Override

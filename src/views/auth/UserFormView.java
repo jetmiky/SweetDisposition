@@ -5,127 +5,121 @@ import interfaces.IUserController;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import views.BaseView;
+import views.BaseModal;
 import views.components.AlertComponent;
 
-public class UserFormView extends BaseView {
+public class UserFormView extends BaseModal {
 
-	private IUserController controller;
+    private final IUserController controller;
 
-	public UserFormView(IUserController controller) {
-		this.controller = controller;
-	}
+    public UserFormView(IUserController controller) {
+    	super("Tambah User");
+        
+    	this.controller = controller;
+    }
 
-	@Override
-	public Pane render() {
-		HBox menuBar = new HBox(10);
-		menuBar.setPadding(new Insets(10));
-		menuBar.setStyle("-fx-background-color: #1565C0;");
+    @Override
+    public Scene render() {
+        ImageView imageView = new ImageView();
+        
+        try {
+            Image image = new Image(getClass().getResource("/resources/adduser.png").toURI().toString());
+            imageView.setImage(image);
+            imageView.setFitWidth(200);
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+        } catch (Exception e) {
+            System.out.println("Error loading image");
+        }
 
-		Button userMenuButton = new Button("User Management");
-		userMenuButton.setStyle("-fx-background-color: #1E88E5;" + "-fx-text-fill: white;" + "-fx-font-size: 14px;"
-				+ "-fx-font-weight: bold;" + "-fx-background-radius: 5px;");
-		
-		menuBar.getChildren().add(userMenuButton);
+        // Title
+        Text formTitle = new Text("Tambah User");
+        formTitle.setFont(Font.font("Open Sans", FontWeight.BOLD, 24));
+        formTitle.setFill(Color.BLACK);
 
-		// Form title
-		Text formTitle = new Text("Tambah User");
-		formTitle.setFont(Font.font("Open Sans", FontWeight.BOLD, 24));
-		formTitle.setFill(Color.BLACK);
+        // Form Fields Section
+        TextField nameField = new TextField();
+        nameField.setPromptText("Nama Lengkap");
+        nameField.setMaxWidth(Double.MAX_VALUE);
 
-		// User form
-		GridPane userForm = new GridPane();
-		userForm.setHgap(10);
-		userForm.setVgap(15);
-		userForm.setAlignment(Pos.CENTER);
+        ComboBox<String> roleField = new ComboBox<>(FXCollections.observableArrayList("Staff", "Manager", "Admin"));
+        roleField.getSelectionModel().selectFirst();
+        roleField.setMaxWidth(Double.MAX_VALUE);
 
-		TextField nameField = new TextField();
-		nameField.setPromptText("Nama Lengkap");
+        TextField emailField = new TextField();
+        emailField.setPromptText("Email");
+        emailField.setMaxWidth(Double.MAX_VALUE);
 
-		ComboBox<String> roleField = new ComboBox<>(FXCollections.observableArrayList("Staff", "Manager", "Admin"));
-		roleField.getSelectionModel().selectFirst();
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Password Default");
+        passwordField.setMaxWidth(Double.MAX_VALUE);
 
-		TextField emailField = new TextField();
-		emailField.setPromptText("Email");
+        // Grid Layout for Form Fields
+        GridPane formGrid = new GridPane();
+        formGrid.setHgap(10);
+        formGrid.setVgap(10);
+        formGrid.setAlignment(Pos.CENTER);
+        
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setPercentWidth(30);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPercentWidth(70);
+        formGrid.getColumnConstraints().addAll(col1, col2);
 
-		TextField passwordField = new TextField();
-		passwordField.setPromptText("Password Default");
+        formGrid.add(new Text("Nama"), 0, 0);
+        formGrid.add(nameField, 1, 0);
+        formGrid.add(new Text("Role"), 0, 1);
+        formGrid.add(roleField, 1, 1);
+        formGrid.add(new Text("Email"), 0, 2);
+        formGrid.add(emailField, 1, 2);
+        formGrid.add(new Text("Password"), 0, 3);
+        formGrid.add(passwordField, 1, 3);
 
-		userForm.add(new Text("Nama"), 0, 0);
-		userForm.add(nameField, 1, 0);
-		userForm.add(new Text("Role"), 0, 1);
-		userForm.add(roleField, 1, 1);
-		userForm.add(new Text("Email"), 0, 2);
-		userForm.add(emailField, 1, 2);
-		userForm.add(new Text("Password"), 0, 3);
-		userForm.add(passwordField, 1, 3);
+        // Buttons Section
+        Button createButton = new Button("Create Account");
+        createButton.setStyle("-fx-background-color: #1E88E5; -fx-font-size: 14px; -fx-text-fill: white; -fx-font-weight: bold;");
+        createButton.setOnAction(e -> {
+            String name = nameField.getText();
+            String email = emailField.getText();
+            String role = roleField.getSelectionModel().getSelectedItem();
+            String password = passwordField.getText();
 
-		// Buttons
-		Button createButton = new Button("Create");
-		createButton.setStyle(
-				"-fx-background-color: #1E88E5; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;");
-		createButton.setOnAction(e -> {
-			String name = nameField.getText();
-			String email = emailField.getText();
-			String role = roleField.getSelectionModel().getSelectedItem();
-			String password = passwordField.getText();
+            try {
+                controller.store(name, email, role, password);
+                
+                AlertComponent.success("Sukses", "Registrasi User Sukses!");
+                this.close();
+            } catch (FormException error) {
+                AlertComponent.error("Failed", error.getMessage());
+            }
+        });
 
-			try {
-				controller.store(name, email, role, password);
-			} catch (FormException error) {
-				AlertComponent.error("Failed", error.getMessage());
-			}
-		});
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setStyle("-fx-background-color: #E53935; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold;");
+        cancelButton.setOnAction(e -> this.close());
 
-		Button cancelButton = new Button("Cancel");
-		cancelButton.setStyle(
-				"-fx-background-color: #E53935; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;");
-		cancelButton.setOnAction(e -> screen().redirect("users.index"));
+        HBox buttonBar = new HBox(10, createButton, cancelButton);
+        buttonBar.setAlignment(Pos.CENTER);
 
-		HBox buttonBar = new HBox(10, createButton, cancelButton);
-		buttonBar.setAlignment(Pos.CENTER);
+        // Main Layout
+        VBox mainLayout = new VBox(20, imageView, formTitle, formGrid, buttonBar);
+        mainLayout.setPadding(new Insets(20));
+        mainLayout.setAlignment(Pos.CENTER);
+        mainLayout.setStyle("-fx-background-color: #f1f5f9;");
 
-		VBox formContainer = new VBox(20, formTitle, userForm, buttonBar);
-		formContainer.setAlignment(Pos.CENTER);
-		formContainer.setPadding(new Insets(40));
-
-		// Image placeholder
-		VBox imagePlaceholder = new VBox();
-		imagePlaceholder.setAlignment(Pos.CENTER);
-		imagePlaceholder.setStyle("-fx-background-color: #dae4fe;");
-
-		try {
-			Image image = new Image(getClass().getResource("/resources/loginIlust.png").toURI().toString());
-			ImageView imageView = new ImageView(image);
-			imageView.setFitWidth(400);
-			imageView.setPreserveRatio(true);
-			imageView.setSmooth(true);
-			imagePlaceholder.getChildren().add(imageView);
-		} catch (Exception e) {
-			System.out.println("Error loading image");
-		}
-
-		// Main layout
-		BorderPane layout = new BorderPane();
-		layout.setTop(menuBar);
-		layout.setRight(formContainer);
-		layout.setCenter(imagePlaceholder);
-
-		return layout;
-	}
-	
+        return new Scene(mainLayout, 400, 600);
+    }
+    
 }

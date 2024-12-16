@@ -1,8 +1,6 @@
 package repositories;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import models.Task;
 import models.User;
 import utils.QueryBuilder;

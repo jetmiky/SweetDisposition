@@ -1,28 +1,27 @@
 package views.task;
 
 import java.util.Date;
-import java.util.List;
-
 import interfaces.ITaskController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import models.Progress;
 import models.Task;
 import models.User;
-import views.BaseView;
+import views.BaseModal;
+import views.progresses.ProgressFormView;
 
-public class TaskShowStaffView extends BaseView {
+public class TaskShowStaffView extends BaseModal {
 
 	private ITaskController controller;
 	private Task task;
@@ -30,16 +29,18 @@ public class TaskShowStaffView extends BaseView {
 	private User manager;
 	private User staff;
 
-	public TaskShowStaffView(ITaskController controller, Task task, List<Progress> progresses, User manager, User staff) {
+	public TaskShowStaffView(ITaskController controller, Task task) {
+		super("Task Detail");
+		
 		this.controller = controller;
 		this.task = task;
-		this.progresses = FXCollections.observableArrayList(progresses);
-		this.manager = manager;
-		this.staff = staff;
+		this.progresses = FXCollections.observableArrayList(task.getProgresses());
+		this.manager = task.getManager();
+		this.staff = task.getStaff();
 	}
 
 	@Override
-	public Pane render() {
+	public Scene render() {
 		Text manager = new Text("Manager");
 		Text title = new Text("Title");
 		Text description = new Text("Description");
@@ -69,14 +70,12 @@ public class TaskShowStaffView extends BaseView {
 
 		Button updateProgressButton = new Button("Tambah Progress");
 		updateProgressButton.setOnAction(e -> {
-			state().set("task", this.task);
-			screen().redirect("progresses.create");
+			new ProgressFormView(task).show();
+			table.refresh();
 		});
 
 		Button cancelButton = new Button("Back");
-		cancelButton.setOnAction(e -> {
-			screen().redirect("tasks.index.staff");
-		});
+		cancelButton.setOnAction(e -> this.close());
 		
 		HBox buttons = new HBox();
 		buttons.setSpacing(8);
@@ -105,7 +104,7 @@ public class TaskShowStaffView extends BaseView {
 		container.setSpacing(16);
 		container.getChildren().addAll(details, table, buttons);
 		
-		return container;
+		return new Scene(container, 800, 500);
 	}
 
 }
