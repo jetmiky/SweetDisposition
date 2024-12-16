@@ -94,25 +94,7 @@ public class TaskIndexStaffView extends BaseView {
         HBox searchBar = new HBox(10, searchField, searchButton);
         searchBar.setAlignment(Pos.CENTER_RIGHT);
 
-        // Create Task Button
-        Button createTaskButton = new Button("Create Task");
-        createTaskButton.setStyle(
-            "-fx-background-color: #1E88E5; " +
-            "-fx-text-fill: white; " +
-            "-fx-font-size: 14px; " +
-            "-fx-font-weight: bold; " +
-            "-fx-background-radius: 5px;");
-        createTaskButton.setOnMouseEntered(event -> {
-            createTaskButton.setStyle(createTaskButton.getStyle() + "-fx-background-color: #1565C0;");
-        });
-        createTaskButton.setOnMouseExited(event -> {
-            createTaskButton.setStyle(createTaskButton.getStyle().replace("-fx-background-color: #1565C0;", "-fx-background-color: #1E88E5;"));
-        });
-        createTaskButton.setOnAction(e -> {
-            screen().redirect("tasks.create");
-        });
-
-        HBox addSearchBar = new HBox(460, createTaskButton, searchBar);
+        HBox addSearchBar = new HBox(460, searchBar);
         addSearchBar.setAlignment(Pos.CENTER_LEFT);
 
         // Task Table

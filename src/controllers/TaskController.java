@@ -31,7 +31,7 @@ public class TaskController extends BaseController implements ITaskController {
 	}
 
 	@Override
-	public void store(String title, String description, User staff) throws FormException {
+	public Task store(String title, String description, User staff) throws FormException {
 		if (title.isBlank())
 			throw new FormException("Title cannot be empty");
 		if (description.isBlank())
@@ -42,7 +42,7 @@ public class TaskController extends BaseController implements ITaskController {
 		User manager = auth().user();
 		Task task = new Task(manager.getId(), staff.getId(), title, description);
 
-		db().tasks().save(task);
+		return db().tasks().save(task);
 	}
 	
 	@Override

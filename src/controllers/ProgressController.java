@@ -18,17 +18,17 @@ public class ProgressController extends BaseController implements IProgressContr
 	}
 
 	@Override
-	public void store(Task task, String description, Boolean isCompleted) throws FormException {
+	public Progress store(Task task, String description, Boolean isCompleted) throws FormException {
 		if (description.isBlank())
 			throw new FormException("Description cannot be empty");
-
-		Progress progress = new Progress(task.getId(), description, isCompleted);
-		db().progresses().save(progress);
 		
 		if (isCompleted) {
 			task.setCompleted(isCompleted);
 			db().tasks().save(task);
 		}
+		
+		Progress progress = new Progress(task.getId(), description, isCompleted);
+		return db().progresses().save(progress);
 	}
 	
 	@Override

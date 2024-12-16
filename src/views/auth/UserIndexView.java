@@ -86,8 +86,7 @@ public class UserIndexView extends BaseView {
 		    addUserButton.setStyle(addUserButton.getStyle().replace("-fx-background-color: #1565C0;", "-fx-background-color: #1E88E5;")); // Original color when mouse exits
 		});
 
-		addUserButton.setOnAction(e -> new UserFormView(controller).show());
-
+		addUserButton.setOnAction(e -> new UserFormView(controller, users).show());
 
 	    // HBox for title and profile picture
 	    HBox header = new HBox(20); // 20px spacing between the profile picture and the text

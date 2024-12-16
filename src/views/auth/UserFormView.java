@@ -3,6 +3,7 @@ package views.auth;
 import exceptions.FormException;
 import interfaces.IUserController;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -17,17 +18,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import models.User;
 import views.BaseModal;
 import views.components.AlertComponent;
 
 public class UserFormView extends BaseModal {
 
     private final IUserController controller;
+    private ObservableList<User> users;
 
-    public UserFormView(IUserController controller) {
+    public UserFormView(IUserController controller, ObservableList<User> users) {
     	super("Tambah User");
         
     	this.controller = controller;
+    	this.users = users;
     }
 
     @Override
@@ -97,8 +101,9 @@ public class UserFormView extends BaseModal {
             String password = passwordField.getText();
 
             try {
-                controller.store(name, email, role, password);
+                User user = controller.store(name, email, role, password);
                 
+                users.add(user);
                 AlertComponent.success("Sukses", "Registrasi User Sukses!");
                 this.close();
             } catch (FormException error) {

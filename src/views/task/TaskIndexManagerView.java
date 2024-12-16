@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -37,13 +38,13 @@ import views.components.AlertComponent;
 public class TaskIndexManagerView extends BaseView {
 
 	private ITaskController controller;
-	private List<Task> tasks;
+	private ObservableList<Task> tasks;
 	
 	public TaskIndexManagerView(ITaskController controller) {
 		User user = auth().user();
 		
 		this.controller = controller;
-		this.tasks = user.getTasks();
+		this.tasks = FXCollections.observableArrayList(user.getTasks());
 	}
 
 	public Pane render() {
@@ -85,7 +86,7 @@ public class TaskIndexManagerView extends BaseView {
 			createTaskButton.setStyle(createTaskButton.getStyle().replace("-fx-background-color: #1565C0;", "-fx-background-color: #1E88E5;")); // Original color when mouse exits
 		});
 		
-		createTaskButton.setOnAction(e -> new TaskFormView(controller).show());
+		createTaskButton.setOnAction(e -> new TaskFormView(controller, tasks).show());
 	  
 		// HBox for title and profile picture
 	    HBox header = new HBox(20); // 20px spacing between the profile picture and the text
@@ -141,7 +142,7 @@ public class TaskIndexManagerView extends BaseView {
 //		bar.setRight(createTaskButton);
 		
 		//create tableview with tasks data
-		TableView<Task> table = new TableView<>(FXCollections.observableArrayList(tasks));
+		TableView<Task> table = new TableView<>(tasks);
 		TableColumn<Task, Integer> taskIdColumn = new TableColumn<>("ID");
 		TableColumn<Task, String> taskTitleColumn = new TableColumn<>("Title");
 		TableColumn<Task, String> taskDescriptionColumn = new TableColumn<>("Description");

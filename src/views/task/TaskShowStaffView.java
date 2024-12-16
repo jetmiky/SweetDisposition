@@ -120,7 +120,7 @@ public class TaskShowStaffView extends BaseModal {
             // Update Progress Button
             Button updateProgressButton = new Button("Add Progress");
             updateProgressButton.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5px;");
-            updateProgressButton.setOnAction(e -> new ProgressFormView(task).show());
+            updateProgressButton.setOnAction(e -> new ProgressFormView(task, progresses).show());
 
         	buttons.getChildren().add(updateProgressButton);
         }

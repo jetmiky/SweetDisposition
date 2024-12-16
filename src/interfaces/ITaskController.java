@@ -11,7 +11,7 @@ public interface ITaskController {
 
 	public Pane staffIndex();
 
-	public void store(String title, String description, User staff) throws FormException;
+	public Task store(String title, String description, User staff) throws FormException;
 
 	public void delete(Task task) throws FormException;
 }

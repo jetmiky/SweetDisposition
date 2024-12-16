@@ -3,6 +3,7 @@ package views.progresses;
 import controllers.ProgressController;
 import exceptions.FormException;
 import interfaces.IProgressController;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -15,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import models.Progress;
 import models.Task;
 import views.BaseModal;
 import views.components.AlertComponent;
@@ -23,19 +25,22 @@ public class ProgressFormView extends BaseModal {
 
 	private IProgressController controller;
 	private Task task;
+	private ObservableList<Progress> progresses;
 
-	public ProgressFormView(IProgressController controller, Task task) {
+	public ProgressFormView(IProgressController controller, Task task, ObservableList<Progress> progresses) {
 		super("Add Task Progress");
 
 		this.controller = controller;
 		this.task = task;
+		this.progresses = progresses;
 	}
 
-	public ProgressFormView(Task task) {
+	public ProgressFormView(Task task, ObservableList<Progress> progresses) {
 		super("Add Task Progress");
 
 		this.controller = ProgressController.getInstance();
 		this.task = task;
+		this.progresses = progresses;
 	}
 
 	@Override
@@ -61,7 +66,9 @@ public class ProgressFormView extends BaseModal {
                 String description = descriptionField.getText();
                 Boolean isCompleted = completedCheckbox.isSelected();
 
-                this.controller.store(this.task, description, isCompleted);
+                Progress progress = this.controller.store(this.task, description, isCompleted);
+                
+                progresses.add(progress);
                 AlertComponent.success("Berhasil", "Progress telah ditambahkan");
                 this.close();
             } catch (FormException error) {

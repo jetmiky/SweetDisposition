@@ -1,11 +1,9 @@
 package main;
 
-import java.net.URISyntaxException;
-
 import controllers.AuthController;
-import controllers.ProgressController;
 import controllers.TaskController;
 import controllers.UserController;
+import java.net.URISyntaxException;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;

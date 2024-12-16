@@ -22,6 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import models.Task;
 import models.User;
 import views.BaseModal;
 import views.components.AlertComponent;
@@ -29,15 +30,17 @@ import views.components.AlertComponent;
 public class TaskFormView extends BaseModal {
 
     private final ITaskController controller;
-    private final ObservableList<User> staffs;
+    private ObservableList<Task> tasks;
+    private ObservableList<User> staffs;
 
-    public TaskFormView(ITaskController controller) {
+    public TaskFormView(ITaskController controller, ObservableList<Task> tasks) {
         super("Create New Task");
     	
         User user = auth().user();
         
     	this.controller = controller;
-        this.staffs = FXCollections.observableArrayList(user.getStaffs());
+    	this.tasks = tasks;
+    	this.staffs = FXCollections.observableArrayList(user.getStaffs());
     } 
 
     @Override
@@ -87,8 +90,9 @@ public class TaskFormView extends BaseModal {
             User staff = staffDropdown.getSelectionModel().getSelectedItem();
 
             try {
-                this.controller.store(title, description, staff);
+                Task task = this.controller.store(title, description, staff);
                 
+                tasks.add(task);
                 AlertComponent.success("Success", "Task successfully created");
                 this.close();
             } catch (FormException error) {

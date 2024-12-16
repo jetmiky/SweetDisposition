@@ -27,7 +27,7 @@ public class UserController extends BaseController implements IUserController {
 	}
 
 	@Override
-	public void store(String name, String email, String role, String password) throws FormException {
+	public User store(String name, String email, String role, String password) throws FormException {
 		if (name.isBlank())
 			throw new FormException("Name cannot be empty");
 		if (email.isBlank())
@@ -44,15 +44,15 @@ public class UserController extends BaseController implements IUserController {
 			throw new FormException("Email already taken.");
 
 		user = new User(name, email, role, password);
-		db().users().save(user);
+		return db().users().save(user);
 	}
 
 	@Override
-	public void update(User user) throws FormException {
+	public User update(User user) throws FormException {
 		if (user == null)
 			throw new FormException("Please select a user to update");
 
-		db().users().save(user);
+		return db().users().save(user);
 	}
 
 	@Override
